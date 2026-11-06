@@ -1,0 +1,57 @@
+{
+  "name": "ta4-front",
+  "displayName": "TA4 Consulta RUC - Frontend",
+  "version": "0.1.0",
+  "description": "Interfaz web para cargar el Excel de RUC y consultar los resultados (TA4)",
+  "private": true,
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build",
+    "watch": "ng build --watch --configuration development",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "prettier": "prettier --config ./.prettierrc --write \"src/{app,environments}/**/*{.ts,.html,.css,.json}\"",
+    "prettier:verify": "prettier --config ./.prettierrc --check \"src/{app,environments}/**/*{.ts,.html,.css,.json}\"",
+    "lint": "ng lint"
+  },
+  "dependencies": {
+    "@angular/common": "^21.2.25",
+    "@angular/compiler": "^21.2.25",
+    "@angular/core": "^21.2.25",
+    "@angular/forms": "^21.2.25",
+    "@angular/platform-browser": "^21.2.25",
+    "@angular/router": "^21.2.25",
+    "@ngrx/effects": "^21.1.1",
+    "@ngrx/store": "^21.1.1",
+    "@tailwindcss/forms": "^0.5.10",
+    "@tailwindcss/postcss": "^4.0.3",
+    "qrcode": "^1.5.4",
+    "rxjs": "^7.8.2",
+    "tslib": "^2.3.0"
+  },
+  "devDependencies": {
+    "@angular/build": "^21.2.24",
+    "@angular/cli": "^21.2.24",
+    "@angular/compiler-cli": "^21.2.25",
+    "@eslint/js": "^9.39.5",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.19.0",
+    "@types/qrcode": "^1.5.5",
+    "angular-eslint": "^21.4.0",
+    "eslint": "^9.39.5",
+    "jest": "^30.4.2",
+    "jest-environment-jsdom": "^30.4.1",
+    "jest-preset-angular": "^17.0.0",
+    "postcss": "^8.5.3",
+    "prettier": "^3.9.9",
+    "tailwindcss": "^4.0.5",
+    "typescript": "~5.9.3",
+    "typescript-eslint": "^8.71.0",
+    "zone.js": "^0.15.1"
+  },
+  "engines": {
+    "node": "^20.19.0 || ^22.12.0 || >=24.0.0"
+  }
+}

@@ -1,0 +1,33 @@
+<section class="bg-surface border-border animate-rise flex flex-col gap-4 rounded-lg border p-4 shadow-[var(--shadow-card)] sm:flex-row sm:items-center">
+  <div class="border-border flex h-48 w-48 shrink-0 items-center justify-center self-center rounded-md border bg-white">
+    @if (qr(); as image) {
+      <img [src]="image" alt="Código QR para abrir el bot en Telegram" class="h-44 w-44" />
+    } @else {
+      <p class="text-muted px-4 text-center text-sm">El QR aparece cuando el bot esté conectado a Telegram.</p>
+    }
+  </div>
+  <div class="min-w-0">
+    <h3 class="text-sm font-semibold">Hablar con el bot</h3>
+    @if (link(); as url) {
+      <p class="text-muted mt-1 text-sm">Escanea el código con el celular o abre el enlace para escribirle.</p>
+      <p class="mt-2 text-sm font-medium break-all">&#64;{{ username() }}</p>
+      <div class="mt-3 flex flex-wrap gap-2">
+        <a
+          [href]="url"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="bg-primary hover:bg-primary-hover focus-visible:ring-primary inline-flex min-h-11 items-center rounded-md px-4 text-sm font-semibold text-white focus-visible:ring-2 focus-visible:ring-offset-2">
+          Abrir en Telegram
+        </a>
+        <button
+          type="button"
+          (click)="presenter.copy(url)"
+          class="border-border hover:bg-background focus-visible:ring-primary inline-flex min-h-11 items-center rounded-md border px-4 text-sm font-medium focus-visible:ring-2">
+          {{ presenter.copied() ? 'Enlace copiado' : 'Copiar enlace' }}
+        </button>
+      </div>
+    } @else {
+      <p class="text-muted mt-1 text-sm">Todavía no se conoce el usuario del bot. Revisa que TELEGRAM_BOT_TOKEN esté en infra/.env.</p>
+    }
+  </div>
+</section>

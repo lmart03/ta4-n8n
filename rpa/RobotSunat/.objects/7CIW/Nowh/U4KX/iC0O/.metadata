@@ -1,0 +1,15 @@
+﻿{
+  "Name": "Boton Seleccionar archivo",
+  "Description": "Selector de archivo de la pestana Validar mediante archivo",
+  "Type": "Element",
+  "TaxonomyType": "None",
+  "Id": "iC0OJJ35Vk6o17kUxkZ2Og",
+  "Reference": "yAE0NrFs00uPjw0rptqV2g/iC0OJJ35Vk6o17kUxkZ2Og",
+  "ParentRef": "yAE0NrFs00uPjw0rptqV2g/U4KXygr4oEqTVDhXHYJcug",
+  "Created": "2026-11-06T17:06:12.1142094Z",
+  "Updated": "2026-11-06T17:06:12.1142094Z",
+  "CreatedBy": [
+    "UiPath.UIAutomationCore, Version=26.10.7.0, Culture=neutral, PublicKeyToken=null",
+    "UiPath.Platform, Version=26.4.0.0, Culture=neutral, PublicKeyToken=null"
+  ]
+}

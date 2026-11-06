@@ -1,0 +1,14 @@
+﻿{
+  "Name": "Consulta Ruc SUNAT",
+  "Description": "Pagina Consulta RUC de SUNAT en Edge",
+  "Type": "Screen",
+  "Id": "Nxc1XO7fPUWddxv6qUIEZw",
+  "Reference": "yAE0NrFs00uPjw0rptqV2g/Nxc1XO7fPUWddxv6qUIEZw",
+  "ParentRef": "yAE0NrFs00uPjw0rptqV2g/Nowh14T4dE-mQVtLYyjSzQ",
+  "Created": "2026-11-05T19:51:04.4795762Z",
+  "Updated": "2026-11-05T19:51:04.4795762Z",
+  "CreatedBy": [
+    "UiPath.UIAutomationCore, Version=26.10.7.0, Culture=neutral, PublicKeyToken=null",
+    "UiPath.Platform, Version=26.4.0.0, Culture=neutral, PublicKeyToken=null"
+  ]
+}

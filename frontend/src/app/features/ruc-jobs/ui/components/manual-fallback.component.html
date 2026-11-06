@@ -1,0 +1,52 @@
+<details class="border-border rounded-lg border" [open]="open()">
+  <summary class="focus-visible:ring-primary flex min-h-11 cursor-pointer items-center gap-2 px-4 py-2 text-sm font-medium select-none focus-visible:ring-2">
+    ¿SUNAT bloquea al robot? Otras formas de obtener los datos
+  </summary>
+
+  <div class="border-border flex flex-wrap items-center gap-3 border-t px-4 py-4 text-sm">
+    <div class="min-w-0 flex-1">
+      <p class="font-medium">Opción rápida: consultar por API</p>
+      <p class="text-muted">
+        Obtiene los datos de la API de consultaderuc.pe, no de la Consulta Múltiple de SUNAT. El resultado queda marcado con
+        esa fuente y no trae la fecha de inicio de actividades.
+      </p>
+    </div>
+    <button type="button" [class]="presenter.linkButton" [disabled]="busy()" (click)="apiLookup.emit()">
+      @if (busy()) {
+        Consultando…
+      } @else {
+        Consultar por API
+      }
+    </button>
+  </div>
+
+  <ol class="border-border flex flex-col gap-4 border-t px-4 py-4 text-sm">
+    <li class="flex flex-wrap items-center gap-3">
+      <span class="bg-primary-soft text-primary flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-semibold">1</span>
+      <span class="min-w-0 flex-1">Descarga el archivo TXT con tus RUC.</span>
+      @if (inputUrl(); as url) {
+        <a [href]="url" download [class]="presenter.linkButton">Descargar TXT</a>
+      }
+    </li>
+    <li class="flex flex-wrap items-center gap-3">
+      <span class="bg-primary-soft text-primary flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-semibold">2</span>
+      <span class="min-w-0 flex-1">
+        En la Consulta Múltiple de SUNAT, usa «Validar mediante archivo», sube el TXT y descarga el ZIP que te devuelve.
+      </span>
+      <a [href]="presenter.sunatUrl" target="_blank" rel="noopener noreferrer" [class]="presenter.linkButton">Abrir SUNAT</a>
+    </li>
+    <li class="flex flex-wrap items-center gap-3">
+      <span class="bg-primary-soft text-primary flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-semibold">3</span>
+      <span class="min-w-0 flex-1">Sube aquí el ZIP; los resultados aparecerán en la tabla.</span>
+      <label [class]="presenter.primaryButton" [class.opacity-50]="busy()" [class.pointer-events-none]="busy()">
+        @if (busy()) {
+          <svg class="h-4 w-4 animate-spin motion-reduce:animate-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9" /></svg>
+          Procesando…
+        } @else {
+          Subir ZIP de SUNAT
+        }
+        <input type="file" class="sr-only" [accept]="presenter.zipAccept" [disabled]="busy()" (change)="onPicked($event)" />
+      </label>
+    </li>
+  </ol>
+</details>

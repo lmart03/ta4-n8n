@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-16"?>
+<ObjectRepositoryTargetData ContentHash="k_QW4o_re0e7aEb6bUFVrg" xmlns="http://schemas.uipath.com/workflow/activities/uix" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <ObjectRepositoryTargetData.Data>
+    <TargetAnchorable x:Key="TargetAnchorable" DesignTimeRectangle="1054, 702, 175, 16" DesignTimeScaleFactor="1" ElementType="Text" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl href='https://www.sunat.gob.pe/cl-at-framework-unloadfile/descargaArchivoAlias?data0_num_id=*' tag='A' /&gt;" Guid="524b3fdf-5c68-4148-b638-4315d2fa4172" ScopeSelectorArgument="&lt;html app='msedge.exe' title='*Opción de Múltiples Rucs*' url='https://e-consultaruc.sunat.gob.pe/cl-ti-itmrconsmulruc*' idx='*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive">
+      <TargetAnchorable.Anchors>
+        <scg:List x:TypeArguments="ITarget" Capacity="0" />
+      </TargetAnchorable.Anchors>
+      <imageRef attrName="InformativeScreenshot" originalValue="85949fadac973912c058954930cda222.jpg" xmlns="">0PbQDtNosLUm6V2Xd19XX8w</imageRef>
+    </TargetAnchorable>
+  </ObjectRepositoryTargetData.Data>
+</ObjectRepositoryTargetData>

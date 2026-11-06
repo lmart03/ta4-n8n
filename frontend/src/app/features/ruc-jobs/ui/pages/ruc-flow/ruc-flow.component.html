@@ -1,0 +1,62 @@
+@let f = presenter.facade;
+<div class="mx-auto flex w-full max-w-[90rem] flex-col gap-6 px-4 py-6 sm:px-8 sm:py-8">
+  <header class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+    <div>
+      <h1 class="text-xl font-semibold sm:text-2xl">Consulta múltiple de RUC</h1>
+      <p class="text-muted mt-1 max-w-2xl text-sm sm:text-base">
+        Adjunta un Excel con hasta 20 RUC. El robot los consulta en SUNAT y te muestra razón social, dirección fiscal,
+        condición y fecha de inicio de actividades.
+      </p>
+    </div>
+    <!-- Disponibilidad del robot: aparte del estado de la ejecución, que se ve en el seguimiento. -->
+    <app-robot-status class="sm:max-w-72 sm:shrink-0" [state]="f.robotState()" />
+  </header>
+
+  @if (f.offline()) {
+    <p class="bg-warning-soft text-warning-text animate-rise rounded-lg border border-amber-200 px-4 py-3 text-sm" role="alert">
+      Se perdió la conexión con el backend. Seguimos intentando y el avance se actualizará solo.
+    </p>
+  }
+
+  <app-file-panel
+    [fileName]="f.fileName()"
+    [fileSize]="f.fileSize()"
+    [clientError]="f.clientError()"
+    [problem]="f.problem()"
+    [busy]="f.busy()"
+    [canBegin]="f.canBegin()"
+    [job]="f.job()"
+    [robotState]="f.robotState()"
+    [canReset]="presenter.canReset()"
+    (fileSelected)="f.select($event)"
+    (begin)="f.begin()"
+    (newFlow)="f.reset()" />
+
+  <app-run-tracker
+    [flow]="f.flow()"
+    [problem]="f.job() ? f.problem() : null"
+    [canRetry]="f.canRetry()"
+    [summary]="f.job()?.summary ?? null"
+    [exportUrl]="f.exportUrl()"
+    [inputUrl]="f.inputUrl()"
+    [busy]="f.busy()"
+    (retry)="f.retry()"
+    (manualResult)="f.uploadManualResult($event)"
+    (apiLookup)="f.lookupViaApi()" />
+
+  @if (f.job() !== null) {
+    <app-results-grid
+      [items]="f.visibleItems()"
+      [summary]="f.summary()"
+      [search]="f.search()"
+      [statusFilter]="f.statusFilter()"
+      [sortKey]="f.sortKey()"
+      [sortDirection]="f.sortDirection()"
+      [waiting]="presenter.isWaiting()"
+      [exportUrl]="f.exportUrl()"
+      (searchChange)="f.setSearch($event)"
+      (statusFilterChange)="f.setStatusFilter($event)"
+      (sortChange)="f.sortBy($event)"
+      (filtersCleared)="f.clearFilters()" />
+  }
+</div>

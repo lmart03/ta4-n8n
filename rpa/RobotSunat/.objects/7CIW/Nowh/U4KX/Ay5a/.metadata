@@ -1,0 +1,15 @@
+﻿{
+  "Name": "Pestana Validar mediante archivo",
+  "Description": "Pestana Validar mediante archivo de la Consulta Multiple de RUC",
+  "Type": "Element",
+  "TaxonomyType": "Label",
+  "Id": "Ay5a5S3WvEKjpe_vYryonQ",
+  "Reference": "yAE0NrFs00uPjw0rptqV2g/Ay5a5S3WvEKjpe_vYryonQ",
+  "ParentRef": "yAE0NrFs00uPjw0rptqV2g/U4KXygr4oEqTVDhXHYJcug",
+  "Created": "2026-11-06T17:05:23.0252674Z",
+  "Updated": "2026-11-06T17:05:23.0252674Z",
+  "CreatedBy": [
+    "UiPath.UIAutomationCore, Version=26.10.7.0, Culture=neutral, PublicKeyToken=null",
+    "UiPath.Platform, Version=26.4.0.0, Culture=neutral, PublicKeyToken=null"
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "name": "TA4 | Clínica Soraka | Errores del bot",
+  "id": "ta4ErrorFlow01",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "errTrigger",
+      "name": "Error del flujo del bot",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://backend:8080/api/v1/bot/ingest/error",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Ingest-Key",
+              "value": "={{ $env.BOT_INGEST_KEY }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({message:String($json.execution?.error?.message||'Error sin detalle').slice(0,900),node:String($json.execution?.lastNodeExecuted||'desconocido').slice(0,180)}) }}",
+        "options": {
+          "timeout": 4000
+        }
+      },
+      "id": "errReport",
+      "name": "Backend | Registrar error",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        260,
+        0
+      ],
+      "onError": "continueRegularOutput",
+      "notes": "Solo se informa el mensaje técnico y el nodo; nunca el texto del usuario ni se responde al paciente."
+    }
+  ],
+  "connections": {
+    "Error del flujo del bot": {
+      "main": [
+        [
+          {
+            "node": "Backend | Registrar error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "active": false
+}

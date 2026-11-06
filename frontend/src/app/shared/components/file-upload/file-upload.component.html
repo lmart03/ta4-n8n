@@ -1,0 +1,30 @@
+<label
+  [class]="presenter.zoneClasses(disabled())"
+  (dragover)="presenter.onDragOver($event, disabled())"
+  (dragleave)="presenter.onDragLeave()"
+  (drop)="onDrop($event)">
+  <input
+    type="file"
+    class="sr-only"
+    [accept]="accept()"
+    [disabled]="disabled()"
+    aria-describedby="file-upload-hint"
+    (change)="onPicked($event)" />
+
+  <svg class="text-muted h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+    <path
+      stroke-width="1.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      d="M12 16V4m0 0L8 8m4-4 4 4M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" />
+  </svg>
+
+  <span class="text-base font-medium">
+    @if (presenter.dragging()) {
+      Suelta el archivo aquí
+    } @else {
+      Arrastra tu Excel aquí o <span class="text-primary underline underline-offset-2">elige un archivo</span>
+    }
+  </span>
+  <span id="file-upload-hint" class="text-muted text-sm">{{ hint() }}</span>
+</label>

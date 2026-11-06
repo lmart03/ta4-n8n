@@ -1,0 +1,142 @@
+@let f = presenter.facade;
+<div class="flex flex-col gap-5">
+  @if (f.editingFaq() !== null) {
+    <app-faq-form
+      [faq]="presenter.editing()"
+      [busy]="f.faqBusy()"
+      [problem]="f.faqProblem()"
+      (save)="f.saveFaq(presenter.editing()?.id ?? null, $event)"
+      (dismiss)="f.editFaq(null)" />
+  } @else if (presenter.problemText(); as text) {
+    <p class="bg-danger-soft text-danger-text rounded-lg border border-red-200 px-4 py-2.5 text-sm" role="alert">{{ text }}</p>
+  }
+
+  <section class="bg-surface border-border flex flex-col gap-3 rounded-lg border p-4 shadow-[var(--shadow-card)] sm:p-5">
+    <div class="flex flex-wrap items-start justify-between gap-3">
+      <div>
+        <h2 class="text-base font-semibold">Preguntas frecuentes</h2>
+        <p class="text-muted mt-1 max-w-2xl text-sm">
+          Lo que el bot puede responder. Los cambios valen desde el siguiente mensaje: no hay que reiniciar ni reprogramar nada.
+        </p>
+      </div>
+      <button
+        type="button"
+        (click)="f.editFaq('new')"
+        class="bg-primary hover:bg-primary-hover focus-visible:ring-primary min-h-11 rounded-md px-5 text-sm font-semibold text-white focus-visible:ring-2 focus-visible:ring-offset-2">
+        Nueva pregunta
+      </button>
+    </div>
+
+    <div class="flex flex-col gap-2 sm:flex-row">
+      <label class="sr-only" for="faq-search">Buscar en las preguntas</label>
+      <input
+        id="faq-search"
+        type="search"
+        [value]="presenter.search()"
+        (input)="presenter.search.set(presenter.text($event))"
+        placeholder="Buscar en preguntas y respuestas"
+        class="border-border focus:border-primary focus:ring-primary min-h-11 flex-1 rounded-md border bg-white px-3 text-sm" />
+      <label class="sr-only" for="faq-filter">Filtrar por categoría</label>
+      <select
+        id="faq-filter"
+        (change)="presenter.category.set(presenter.text($event))"
+        class="border-border focus:border-primary focus:ring-primary min-h-11 rounded-md border bg-white text-sm">
+        @for (option of presenter.categoryOptions; track option.value) {
+          <option [value]="option.value" [selected]="option.value === presenter.category()">{{ option.label }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="w-full min-w-[48rem] text-left text-sm">
+        <caption class="sr-only">Preguntas frecuentes del bot</caption>
+        <thead class="text-muted border-border border-b text-xs uppercase">
+          <tr>
+            <th scope="col" class="py-2 pr-3 font-medium">Categoría</th>
+            <th scope="col" class="py-2 pr-3 font-medium">Pregunta y respuesta</th>
+            <th scope="col" class="py-2 pr-3 font-medium">Activa</th>
+            <th scope="col" class="py-2 text-right font-medium">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (faq of presenter.visible(); track faq.id) {
+            <tr class="border-border border-b align-top last:border-0" [class.opacity-60]="!faq.active">
+              <td class="py-3 pr-3 whitespace-nowrap">{{ presenter.categoryLabel(faq.category) }}</td>
+              <td class="py-3 pr-3">
+                <p class="font-medium">{{ faq.question }}</p>
+                <p class="text-muted mt-1 break-words">{{ faq.answer }}</p>
+              </td>
+              <td class="py-3 pr-3">
+                <button
+                  type="button"
+                  role="switch"
+                  [attr.aria-checked]="faq.active"
+                  [attr.aria-label]="(faq.active ? 'Desactivar: ' : 'Activar: ') + faq.question"
+                  (click)="f.toggleFaq(faq)"
+                  [disabled]="f.faqBusy()"
+                  class="focus-visible:ring-primary relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-60"
+                  [class]="faq.active ? 'bg-primary' : 'bg-slate-300'">
+                  <span class="inline-block h-5 w-5 rounded-full bg-white shadow transition-transform" [class]="faq.active ? 'translate-x-5' : 'translate-x-0.5'"></span>
+                </button>
+              </td>
+              <td class="py-3 text-right whitespace-nowrap">
+                @if (presenter.confirmingDelete() === faq.id) {
+                  <button type="button" (click)="presenter.delete(faq)" class="text-danger-text focus-visible:ring-danger min-h-11 rounded px-2 text-sm font-semibold focus-visible:ring-2">Confirmar borrado</button>
+                  <button type="button" (click)="presenter.confirmingDelete.set(null)" class="focus-visible:ring-primary min-h-11 rounded px-2 text-sm focus-visible:ring-2">Cancelar</button>
+                } @else {
+                  <button type="button" (click)="f.editFaq(faq.id)" class="text-primary focus-visible:ring-primary min-h-11 rounded px-2 text-sm font-semibold focus-visible:ring-2">Editar</button>
+                  <button type="button" (click)="presenter.confirmDelete(faq)" class="text-muted hover:text-danger-text focus-visible:ring-primary min-h-11 rounded px-2 text-sm focus-visible:ring-2">Borrar</button>
+                }
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="4" class="text-muted py-8 text-center">
+                {{ f.faqsLoaded() ? 'No hay preguntas con ese filtro.' : 'Cargando preguntas…' }}
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  @if (presenter.draft(); as info) {
+    <details class="bg-surface border-border rounded-lg border shadow-[var(--shadow-card)]">
+      <summary class="focus-visible:ring-primary flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 rounded-lg px-4 text-sm font-medium focus-visible:ring-2 sm:px-5">
+        <span>Datos de la clínica</span>
+        <span class="text-muted text-xs">{{ info.businessName }}</span>
+      </summary>
+      <form (submit)="$event.preventDefault(); presenter.saveBusiness()" class="border-border grid gap-4 border-t p-4 sm:grid-cols-2 sm:p-5">
+        @for (field of presenter.businessFields; track field.key) {
+          <div [class.sm:col-span-2]="field.long">
+            <label [for]="'business-' + field.key" class="mb-1 block text-sm font-medium">{{ field.label }}</label>
+            @if (field.long) {
+              <textarea
+                [id]="'business-' + field.key"
+                rows="2"
+                [value]="presenter.businessValue(field.key)"
+                (input)="presenter.setBusinessField(field.key, presenter.text($event))"
+                class="border-border focus:border-primary focus:ring-primary w-full rounded-md border bg-white px-3 py-2 text-sm"></textarea>
+            } @else {
+              <input
+                [id]="'business-' + field.key"
+                type="text"
+                [value]="presenter.businessValue(field.key)"
+                (input)="presenter.setBusinessField(field.key, presenter.text($event))"
+                class="border-border focus:border-primary focus:ring-primary min-h-11 w-full rounded-md border bg-white px-3 text-sm" />
+            }
+          </div>
+        }
+        <div class="sm:col-span-2">
+          <button
+            type="submit"
+            [disabled]="f.faqBusy()"
+            class="bg-primary hover:bg-primary-hover focus-visible:ring-primary min-h-11 rounded-md px-5 text-sm font-semibold text-white focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-60">
+            {{ f.faqBusy() ? 'Guardando…' : 'Guardar datos de la clínica' }}
+          </button>
+        </div>
+      </form>
+    </details>
+  }
+</div>

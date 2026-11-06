@@ -1,0 +1,71 @@
+@let f = presenter.facade;
+<div class="flex flex-col gap-5">
+  <div class="flex flex-wrap items-center justify-between gap-3">
+    <p class="text-muted max-w-2xl text-sm">
+      Solo se cuentan respuestas reales (no las pruebas automáticas) y no se guarda quién preguntó ni qué escribió. Son los indicadores de
+      latencia, respuestas respaldadas y derivación del informe.
+    </p>
+    <div class="border-border inline-flex overflow-hidden rounded-md border" role="group" aria-label="Rango de tiempo">
+      @for (range of presenter.ranges; track range.hours) {
+        <button
+          type="button"
+          (click)="presenter.select(range.hours)"
+          [attr.aria-pressed]="presenter.hours() === range.hours"
+          class="focus-visible:ring-primary min-h-11 px-3 text-sm focus-visible:ring-2 focus-visible:ring-inset"
+          [class]="presenter.hours() === range.hours ? 'bg-primary font-semibold text-white' : 'bg-white hover:bg-slate-50'">
+          {{ range.label }}
+        </button>
+      }
+    </div>
+  </div>
+
+  @if (presenter.problemText(); as text) {
+    <p class="bg-danger-soft text-danger-text rounded-lg border border-red-200 px-4 py-2.5 text-sm" role="alert">{{ text }}</p>
+  }
+
+  @if (f.metrics(); as m) {
+    <dl class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div class="bg-surface border-border animate-rise rounded-lg border p-4 shadow-[var(--shadow-card)]">
+        <dt class="text-muted text-sm">Preguntas atendidas</dt>
+        <dd class="mt-1 text-3xl font-semibold">{{ m.total }}</dd>
+      </div>
+      <div class="bg-surface border-border animate-rise rounded-lg border p-4 shadow-[var(--shadow-card)]">
+        <dt class="text-muted text-sm">Latencia promedio</dt>
+        <dd class="mt-1 text-3xl font-semibold">{{ presenter.latency(m.avgLatencyMs) }}</dd>
+      </div>
+      <div class="bg-surface border-border animate-rise rounded-lg border p-4 shadow-[var(--shadow-card)]">
+        <dt class="text-muted text-sm">Latencia p95</dt>
+        <dd class="mt-1 text-3xl font-semibold">{{ presenter.latency(m.p95LatencyMs) }}</dd>
+        <dd class="text-muted mt-1 text-xs">9 de cada 10 respuestas tardan menos.</dd>
+      </div>
+      <div class="bg-surface border-border animate-rise rounded-lg border p-4 shadow-[var(--shadow-card)]">
+        <dt class="text-muted text-sm">Derivadas a recepción</dt>
+        <dd class="mt-1 text-3xl font-semibold">{{ m.derivedPercent }}%</dd>
+        <dd class="text-muted mt-1 text-xs">Sin dato o rechazadas por ser consultas médicas.</dd>
+      </div>
+    </dl>
+
+    <section class="bg-surface border-border rounded-lg border p-4 shadow-[var(--shadow-card)] sm:p-5">
+      <h2 class="text-base font-semibold">De dónde salió cada respuesta</h2>
+      @if (presenter.shares().length > 0) {
+        <ul class="mt-4 flex flex-col gap-3">
+          @for (share of presenter.shares(); track share.source) {
+            <li>
+              <div class="flex items-baseline justify-between gap-2 text-sm">
+                <span class="font-medium">{{ share.label }}</span>
+                <span class="text-muted">{{ share.count }} · {{ share.percent }}%</span>
+              </div>
+              <div class="mt-1 h-2.5 overflow-hidden rounded-full bg-slate-100" role="img" [attr.aria-label]="share.label + ': ' + share.percent + '%'">
+                <div class="bg-primary h-full rounded-full transition-[width] duration-500" [style.width.%]="share.percent"></div>
+              </div>
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="text-muted mt-3 text-sm">Todavía no hay respuestas en este rango. Escríbele al bot desde Telegram para generar datos.</p>
+      }
+    </section>
+  } @else {
+    <div class="bg-surface border-border text-muted rounded-lg border p-6 text-center text-sm" role="status">Cargando métricas…</div>
+  }
+</div>

@@ -1,0 +1,38 @@
+<details class="bg-surface border-border rounded-lg border">
+  <summary class="focus-visible:ring-primary flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 rounded-lg px-4 text-sm font-medium focus-visible:ring-2">
+    <span>Privacidad de las conversaciones</span>
+    <span class="text-muted text-xs">{{ presenter.store() ? 'Se guardan ' + presenter.hours() + ' h' : 'No se guardan' }}</span>
+  </summary>
+  <form (submit)="$event.preventDefault(); submit()" class="border-border flex flex-col gap-3 border-t px-4 py-4 text-sm">
+    <p class="text-muted">
+      Los nombres de Telegram y los mensajes son datos personales. Las conversaciones se borran solas al vencer el plazo; las
+      métricas se conservan sin contenido ni usuario.
+    </p>
+    <label class="flex min-h-11 items-center gap-2">
+      <input type="checkbox" [checked]="presenter.store()" (change)="presenter.store.set(presenter.checked($event))" class="text-primary focus:ring-primary h-4 w-4 rounded" />
+      Guardar las conversaciones para verlas en el panel
+    </label>
+    <label class="flex flex-wrap items-center gap-2">
+      Borrar después de
+      <select
+        [disabled]="!presenter.store()"
+        (change)="presenter.hours.set(presenter.number($event))"
+        class="border-border focus:border-primary focus:ring-primary min-h-11 rounded-md border bg-white text-sm">
+        @for (option of presenter.retentionOptions; track option.hours) {
+          <option [value]="option.hours" [selected]="option.hours === presenter.hours()">{{ option.label }}</option>
+        }
+      </select>
+    </label>
+    <label class="flex min-h-11 items-center gap-2">
+      <input type="checkbox" [checked]="presenter.auto()" (change)="presenter.auto.set(presenter.checked($event))" class="text-primary focus:ring-primary h-4 w-4 rounded" />
+      Registrar el webhook de Telegram solo cuando cambie la dirección del túnel
+    </label>
+    <div>
+      <button
+        type="submit"
+        class="bg-primary hover:bg-primary-hover focus-visible:ring-primary min-h-11 rounded-md px-5 text-sm font-semibold text-white focus-visible:ring-2 focus-visible:ring-offset-2">
+        Guardar ajustes
+      </button>
+    </div>
+  </form>
+</details>

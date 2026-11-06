@@ -1,0 +1,106 @@
+@import 'tailwindcss';
+
+/** Plugins **/
+@plugin "@tailwindcss/forms";
+
+@theme {
+  /* Inter si el equipo la tiene instalada; si no, la tipografía del sistema (sin descargas externas). */
+  --font-sans: Inter, system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+  --color-background: #f8fafc;
+  --color-foreground: #0f172a;
+  --color-muted: #64748b;
+  --color-border: #e2e8f0;
+  --color-surface: #ffffff;
+
+  --color-primary: #087f5b;
+  --color-primary-hover: #066649;
+  --color-primary-soft: #e6f4ef;
+  --color-accent: #12b886;
+  --color-danger: #dc2626;
+  --color-danger-text: #b91c1c;
+  --color-danger-soft: #fef2f2;
+  --color-success: #087f5b;
+  --color-success-soft: #e6f4ef;
+  --color-warning: #b45309;
+  --color-warning-text: #92400e;
+  --color-warning-soft: #fffbeb;
+
+  --shadow-card: 0 1px 2px rgb(15 23 42 / 0.04);
+
+  --animate-fade-in: fade-in 0.25s ease-out both;
+  --animate-rise: rise 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-pop: pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  --animate-pulse-ring: pulse-ring 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
+  --animate-draw: draw 0.45s ease-out 0.1s both;
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes pop {
+    from {
+      transform: scale(0.8);
+    }
+    to {
+      transform: scale(1);
+    }
+  }
+  /* Pulso discreto de la etapa activa: un anillo que se expande y se desvanece. */
+  @keyframes pulse-ring {
+    0% {
+      transform: scale(1);
+      opacity: 0.45;
+    }
+    75%,
+    100% {
+      transform: scale(1.75);
+      opacity: 0;
+    }
+  }
+  /* El check se "dibuja" al completarse la etapa. */
+  @keyframes draw {
+    from {
+      stroke-dashoffset: 24;
+    }
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+}
+
+app-root {
+  display: block;
+  min-height: 100%;
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-foreground);
+}
+
+/* Respetar la preferencia de menos movimiento: los estados se entienden igual por texto e iconos. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+  }
+}

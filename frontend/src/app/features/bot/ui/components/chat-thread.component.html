@@ -1,0 +1,97 @@
+<div class="flex h-full min-h-0 flex-col">
+  <header class="border-border bg-surface flex flex-wrap items-center gap-3 border-b px-3 py-2.5 sm:px-4">
+    <button
+      type="button"
+      (click)="back.emit()"
+      class="focus-visible:ring-primary -ml-1 inline-flex min-h-11 min-w-11 items-center justify-center rounded-md hover:bg-slate-100 focus-visible:ring-2 lg:hidden"
+      aria-label="Volver a la lista de conversaciones">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+    </button>
+    <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-slate-200 text-sm font-semibold text-slate-700" aria-hidden="true">
+      {{ presenter.initials(chat().name) }}
+    </span>
+    <div class="min-w-0 flex-1">
+      <h2 class="truncate text-sm font-semibold sm:text-base">{{ chat().name }}</h2>
+      <p class="text-muted truncate text-xs">
+        @if (chat().test) {
+          Prueba automática
+        } @else {
+          {{ chat().username ? '@' + chat().username : 'Telegram' }}
+        }
+        ·
+        {{ chat().mode === 'HUMANO' ? 'Atiende recepción: el bot no responde' : 'Responde el bot' }}
+      </p>
+    </div>
+    <div class="flex items-center gap-2">
+      @if (chat().mode === 'HUMANO') {
+        <button
+          type="button"
+          (click)="modeChange.emit('BOT')"
+          class="bg-primary hover:bg-primary-hover focus-visible:ring-primary min-h-11 rounded-md px-3 text-sm font-semibold text-white focus-visible:ring-2 focus-visible:ring-offset-2">
+          Devolver al bot
+        </button>
+      } @else {
+        <button
+          type="button"
+          (click)="modeChange.emit('HUMANO')"
+          class="border-border hover:bg-background focus-visible:ring-primary min-h-11 rounded-md border px-3 text-sm font-medium focus-visible:ring-2">
+          Tomar el chat
+        </button>
+      }
+      @if (presenter.confirmingDelete()) {
+        <button
+          type="button"
+          (click)="deleteChat.emit()"
+          class="bg-danger focus-visible:ring-danger min-h-11 rounded-md px-3 text-sm font-semibold text-white focus-visible:ring-2 focus-visible:ring-offset-2">
+          Confirmar borrado
+        </button>
+        <button
+          type="button"
+          (click)="presenter.confirmingDelete.set(false)"
+          class="border-border hover:bg-background focus-visible:ring-primary min-h-11 rounded-md border px-3 text-sm focus-visible:ring-2">
+          Cancelar
+        </button>
+      } @else {
+        <button
+          type="button"
+          (click)="presenter.confirmingDelete.set(true)"
+          class="text-muted hover:text-danger-text focus-visible:ring-primary min-h-11 rounded-md px-3 text-sm focus-visible:ring-2">
+          Borrar chat
+        </button>
+      }
+    </div>
+  </header>
+
+  <div #scroller (scroll)="presenter.onScroll($event)" class="min-h-0 flex-1 overflow-y-auto bg-slate-50 px-3 py-4 sm:px-6" role="log" aria-live="polite" aria-label="Mensajes">
+    @if (messages(); as list) {
+      @for (group of presenter.groups(list); track group.label) {
+        <p class="text-muted mx-auto my-3 w-fit rounded-full bg-slate-200/70 px-3 py-0.5 text-xs font-medium">{{ group.label }}</p>
+        @for (message of group.items; track message.id) {
+          <div class="mb-2 flex" [class]="presenter.rowClass(message)">
+            <div class="animate-rise max-w-[85%] rounded-lg px-3 py-2 shadow-[var(--shadow-card)] sm:max-w-[70%]" [class]="presenter.bubbleClass(message)">
+              @if (presenter.author(message); as who) {
+                <p class="mb-0.5 text-xs font-semibold" [class]="message.author === 'HUMANO' ? 'text-slate-200' : 'text-primary'">{{ who }}</p>
+              }
+              <p class="text-sm break-words whitespace-pre-wrap">{{ message.text }}</p>
+              <p class="mt-1 flex flex-wrap items-center justify-end gap-x-2 text-xs" [class]="presenter.metaClass(message)">
+                @if (presenter.source(message); as source) {
+                  <span class="rounded bg-white/70 px-1.5 py-px font-medium text-slate-700">{{ source }}</span>
+                }
+                @if (presenter.latency(message); as latency) {
+                  <span title="Tiempo que tardó el bot en responder">{{ latency }}</span>
+                }
+                <span>{{ presenter.time(message) }}</span>
+              </p>
+            </div>
+          </div>
+        }
+      } @empty {
+        <p class="text-muted p-6 text-center text-sm">Esta conversación todavía no tiene mensajes.</p>
+      }
+    } @else {
+      <p class="text-muted p-6 text-center text-sm">Cargando mensajes…</p>
+    }
+  </div>
+</div>

@@ -1,0 +1,58 @@
+<ol class="grid grid-cols-5" aria-label="Etapas del flujo">
+  @for (stage of stages(); track stage.key; let index = $index; let last = $last) {
+    <li class="relative flex flex-col items-center gap-2 px-1 text-center" [attr.aria-current]="presenter.isCurrent(stage) ? 'step' : null">
+      @if (!last) {
+        <!-- Conector hasta la siguiente etapa: se llena de izquierda a derecha cuando ESTA etapa se completa. -->
+        <span class="bg-border absolute top-4 left-1/2 h-0.5 w-full -translate-y-1/2 overflow-hidden rounded-full" aria-hidden="true">
+          <span
+            class="bg-primary block h-full transition-[width] duration-500 ease-out"
+            [style.transition-delay.ms]="plan()[index].connectorMs"
+            [style.width.%]="presenter.connectorFill(stage.state)"></span>
+        </span>
+      }
+
+      <span class="relative flex h-8 w-8 items-center justify-center" aria-hidden="true">
+        @if (stage.state === 'active') {
+          <span class="bg-accent absolute inset-0 animate-pulse-ring rounded-full motion-reduce:hidden"></span>
+        }
+        <span [class]="presenter.circleClasses(stage.state)" [style.transition-delay.ms]="plan()[index].circleMs">
+          @switch (stage.state) {
+            @case ('done') {
+              <svg class="h-4 w-4 animate-pop" [style.animation-delay.ms]="plan()[index].circleMs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <path class="animate-draw" [style.animation-delay.ms]="plan()[index].circleMs + 100" stroke-dasharray="24" d="m5 12 5 5L20 7" />
+              </svg>
+            }
+            @case ('active') {
+              <svg class="h-4 w-4 animate-spin motion-reduce:animate-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round">
+                <path d="M12 3a9 9 0 1 0 9 9" />
+              </svg>
+            }
+            @case ('attention') {
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round">
+                <path d="M12 7v6m0 4h.01" />
+              </svg>
+            }
+            @case ('error') {
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round">
+                <path d="M6 6l12 12M18 6 6 18" />
+              </svg>
+            }
+            @default {
+              <span class="text-xs font-semibold">{{ index + 1 }}</span>
+            }
+          }
+        </span>
+      </span>
+
+      <div class="flex min-w-0 flex-col items-center gap-0.5">
+        <span class="text-xs leading-tight font-medium sm:text-sm">{{ stage.title }}</span>
+        <span [class]="presenter.labelClasses(stage.state)">{{ presenter.stateLabel(stage) }}</span>
+        <span class="text-muted hidden max-w-44 text-xs leading-snug sm:block">{{ stage.detail ?? stage.description }}</span>
+      </div>
+    </li>
+  }
+</ol>
+
+@if (presenter.currentStage(stages()); as current) {
+  <p class="text-muted mt-3 text-center text-sm sm:hidden">{{ current.detail ?? current.description }}</p>
+}

@@ -1,0 +1,49 @@
+<header class="bg-surface border-border sticky top-0 z-20 border-b">
+  <div class="mx-auto flex w-full max-w-[90rem] items-center justify-between gap-4 px-4 py-2.5 sm:px-8">
+    <!-- Marca -->
+    <a routerLink="/" class="focus-visible:ring-primary flex min-h-11 items-center gap-3 rounded-[10px] pr-2 focus-visible:ring-2" aria-label="TA4, plataforma de automatización: ir al inicio">
+      <span class="bg-primary flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] text-sm font-bold tracking-tight text-white" aria-hidden="true">T4</span>
+      <span class="hidden leading-tight sm:block">
+        <span class="block text-sm font-semibold">{{ presenter.product }}</span>
+        <span class="text-muted block text-xs">{{ presenter.tagline }}</span>
+      </span>
+    </a>
+
+    <!-- Nivel 1: módulos del producto (selector segmentado) -->
+    <nav aria-label="Módulos" class="min-w-0">
+      <ul class="flex gap-1 rounded-xl border border-slate-200 bg-slate-100 p-1">
+        @for (module of presenter.modules; track module.path) {
+          <li>
+            <a
+              [routerLink]="module.path"
+              routerLinkActive="is-active border-primary/30 bg-primary-soft text-primary shadow-sm"
+              ariaCurrentWhenActive="page"
+              class="focus-visible:ring-primary text-muted hover:text-foreground flex min-h-10 items-center gap-2 rounded-[10px] border border-transparent px-3 text-sm font-medium whitespace-nowrap transition-all duration-200 hover:bg-white/70 focus-visible:ring-2 sm:px-4">
+              @switch (module.icon) {
+                @case ('ruc') {
+                  <svg class="h-[18px] w-[18px] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" />
+                    <path d="M14 3v5h5" />
+                    <circle cx="11" cy="14" r="2.5" />
+                    <path d="m13 16 2 2" />
+                  </svg>
+                }
+                @case ('bot') {
+                  <svg class="h-[18px] w-[18px] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M21 4 3 11l6 2.5L11.5 20z" />
+                    <path d="m9 13.5 12-9.5" />
+                  </svg>
+                }
+              }
+              <span class="sm:hidden">{{ module.shortLabel }}</span>
+              <span class="hidden sm:inline">{{ module.label }}</span>
+            </a>
+          </li>
+        }
+      </ul>
+    </nav>
+  </div>
+</header>
+<main [id]="presenter.mainId" class="min-h-screen">
+  <router-outlet />
+</main>

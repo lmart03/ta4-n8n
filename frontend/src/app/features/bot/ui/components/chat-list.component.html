@@ -1,0 +1,59 @@
+<div class="flex h-full min-h-0 flex-col">
+  <div class="border-border border-b p-3">
+    <label class="sr-only" for="chat-search">Buscar conversación</label>
+    <input
+      id="chat-search"
+      type="search"
+      [value]="search()"
+      (input)="searchChange.emit(presenter.valueOf($event))"
+      placeholder="Buscar por nombre o mensaje"
+      class="border-border focus:border-primary focus:ring-primary min-h-11 w-full rounded-md border bg-white px-3 text-sm" />
+  </div>
+  <ul class="min-h-0 flex-1 overflow-y-auto" role="listbox" aria-label="Conversaciones">
+    @for (chat of chats(); track chat.id) {
+      @let count = presenter.unreadOf(unread(), chat.id);
+      <li role="option" [attr.aria-selected]="chat.id === selectedId()">
+        <button
+          type="button"
+          (click)="chatSelected.emit(chat.id)"
+          [attr.aria-label]="presenter.ariaLabel(chat, count)"
+          class="focus-visible:ring-primary border-border hover:bg-background flex min-h-16 w-full items-center gap-3 border-b px-3 py-2.5 text-left focus-visible:ring-2 focus-visible:ring-inset"
+          [class.bg-primary-soft]="chat.id === selectedId()">
+          <span
+            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-slate-200 text-sm font-semibold text-slate-700"
+            aria-hidden="true">
+            {{ presenter.initials(chat) }}
+          </span>
+          <span class="min-w-0 flex-1">
+            <span class="flex items-baseline justify-between gap-2">
+              <span class="truncate text-sm font-semibold">{{ chat.name }}</span>
+              <span class="text-muted shrink-0 text-xs" [class.text-primary]="count > 0">{{ presenter.time(chat) }}</span>
+            </span>
+            <span class="flex items-center justify-between gap-2">
+              <span class="text-muted truncate text-sm">{{ presenter.preview(chat) }}</span>
+              @if (count > 0) {
+                <span class="bg-primary animate-pop min-w-5 shrink-0 rounded-full px-1.5 text-center text-xs font-semibold text-white">{{ count }}</span>
+              }
+            </span>
+            <span class="text-muted flex items-center gap-1.5 text-xs">
+              {{ presenter.subtitle(chat) }}
+              @if (chat.mode === 'HUMANO') {
+                <span class="bg-warning-soft text-warning-text rounded px-1.5 py-px font-medium">Atiende recepción</span>
+              }
+            </span>
+          </span>
+        </button>
+      </li>
+    } @empty {
+      <li class="text-muted p-6 text-center text-sm">
+        @if (!loaded()) {
+          Cargando conversaciones…
+        } @else if (search() !== '') {
+          Ninguna conversación coincide con la búsqueda.
+        } @else {
+          Todavía no hay conversaciones. Escríbele al bot desde Telegram y aparecerán aquí al instante.
+        }
+      </li>
+    }
+  </ul>
+</div>

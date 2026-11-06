@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-16"?>
+<ObjectRepositoryTargetData ContentHash="uE_pPUiOgU6RCoL7hTO84g" xmlns="http://schemas.uipath.com/workflow/activities/uix" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <ObjectRepositoryTargetData.Data>
+    <TargetAnchorable x:Key="TargetAnchorable" DesignTimeRectangle="737, 129, 185, 42" DesignTimeScaleFactor="1" ElementType="Text" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl aaname='Validar mediante archivo' data-toggle='tab' tag='A' /&gt;" Guid="4e4e048d-afc9-47da-8249-4f63caf64bc9" ScopeSelectorArgument="&lt;html app='msedge.exe' title='Descarga multiple de RUC' url='https://e-consultaruc.sunat.gob.pe/cl-ti-itmrconsmulruc*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive">
+      <TargetAnchorable.Anchors>
+        <scg:List x:TypeArguments="ITarget" Capacity="0" />
+      </TargetAnchorable.Anchors>
+      <imageRef attrName="InformativeScreenshot" originalValue="d5c675a3e50e8b00cccb3f60458d2cda.jpg" xmlns="">0vS0fxzmHoEeHv2sKgWx3xg</imageRef>
+    </TargetAnchorable>
+  </ObjectRepositoryTargetData.Data>
+</ObjectRepositoryTargetData>

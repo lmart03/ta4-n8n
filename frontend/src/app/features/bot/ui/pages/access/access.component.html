@@ -1,0 +1,40 @@
+@let f = presenter.facade;
+<div class="mx-auto flex w-full max-w-md flex-col gap-6 px-4 py-12 sm:py-20">
+  <header>
+    <h1 class="text-xl font-semibold sm:text-2xl">Panel del bot de Telegram</h1>
+    <p class="text-muted mt-1 text-sm">
+      Escribe la clave de administrador para ver las conversaciones, probar el bot y editar las preguntas frecuentes.
+    </p>
+  </header>
+
+  <form (submit)="$event.preventDefault(); presenter.submit()" class="bg-surface border-border flex flex-col gap-4 rounded-lg border p-5 shadow-[var(--shadow-card)]">
+    <div>
+      <label for="admin-key" class="mb-1 block text-sm font-medium">Clave de administrador</label>
+      <div class="flex gap-2">
+        <input
+          id="admin-key"
+          [type]="presenter.visible() ? 'text' : 'password'"
+          autocomplete="current-password"
+          [value]="presenter.key()"
+          (input)="presenter.onInput($event)"
+          [attr.aria-invalid]="presenter.problemText() ? 'true' : null"
+          aria-describedby="admin-key-error"
+          class="border-border focus:border-primary focus:ring-primary min-h-11 w-full rounded-md border bg-white px-3 text-sm" />
+        <button
+          type="button"
+          (click)="presenter.visible.set(!presenter.visible())"
+          class="border-border hover:bg-background focus-visible:ring-primary min-h-11 shrink-0 rounded-md border px-3 text-sm focus-visible:ring-2">
+          {{ presenter.visible() ? 'Ocultar' : 'Mostrar' }}
+        </button>
+      </div>
+      <p id="admin-key-error" class="text-danger-text mt-2 text-sm" role="alert" [hidden]="!presenter.problemText()">{{ presenter.problemText() }}</p>
+      <p class="text-muted mt-2 text-xs">Está en la variable ADMIN_KEY del archivo infra/.env.</p>
+    </div>
+    <button
+      type="submit"
+      [disabled]="f.loginBusy() || presenter.key().trim() === ''"
+      class="bg-primary hover:bg-primary-hover focus-visible:ring-primary min-h-11 rounded-md px-5 text-sm font-semibold text-white focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60">
+      {{ f.loginBusy() ? 'Comprobando…' : 'Entrar' }}
+    </button>
+  </form>
+</div>

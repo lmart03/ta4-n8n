@@ -1,0 +1,47 @@
+@let f = presenter.facade;
+<div class="flex flex-col gap-3">
+  @if (presenter.streamBanner(); as banner) {
+    <p class="bg-warning-soft text-warning-text rounded-lg border border-amber-200 px-4 py-2.5 text-sm" role="status">{{ banner }}</p>
+  }
+
+  @if (presenter.problemText(); as text) {
+    <div class="bg-danger-soft text-danger-text flex items-start justify-between gap-3 rounded-lg border border-red-200 px-4 py-2.5 text-sm" role="alert">
+      <p>{{ text }}</p>
+      <button type="button" (click)="f.dismissProblem()" class="focus-visible:ring-danger min-h-11 shrink-0 rounded px-2 font-medium underline focus-visible:ring-2">Cerrar</button>
+    </div>
+  }
+
+  <app-bot-settings-panel [settings]="f.settings()" (save)="f.saveSettings($event)" />
+
+  <div class="bg-surface border-border grid h-[calc(100dvh-20rem)] min-h-[30rem] overflow-hidden rounded-lg border shadow-[var(--shadow-card)] lg:grid-cols-[22rem_1fr]">
+    <aside class="border-border min-h-0 flex-col border-r" [class]="presenter.listClass()">
+      <app-chat-list
+        class="min-h-0 flex-1"
+        [chats]="f.chats()"
+        [selectedId]="f.selectedChat()?.id ?? null"
+        [unread]="f.unread()"
+        [search]="f.chatSearch()"
+        [loaded]="f.chatsLoaded()"
+        (chatSelected)="f.selectChat($event)"
+        (searchChange)="f.searchChats($event)" />
+    </aside>
+
+    <section class="min-h-0 flex-col" [class]="presenter.threadClass()" aria-label="Conversación">
+      @if (f.selectedChat(); as chat) {
+        <app-chat-thread
+          class="min-h-0 flex-1"
+          [chat]="chat"
+          [messages]="f.selectedMessages()"
+          (modeChange)="presenter.changeMode($event)"
+          (deleteChat)="f.deleteSelectedChat()"
+          (back)="f.selectChat(null)" />
+        <app-chat-composer [mode]="chat.mode" [busy]="f.sendBusy()" (send)="presenter.send($event)" />
+      } @else {
+        <div class="text-muted flex h-full flex-1 flex-col items-center justify-center gap-2 p-8 text-center text-sm">
+          <p class="text-foreground text-base font-medium">Elige una conversación</p>
+          <p class="max-w-sm">Verás lo que escribe cada persona y lo que responde el bot. Puedes tomar el chat y responder tú.</p>
+        </div>
+      }
+    </section>
+  </div>
+</div>

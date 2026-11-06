@@ -1,0 +1,47 @@
+@let f = presenter.facade;
+<div class="mx-auto flex w-full max-w-[90rem] flex-col gap-5 px-4 py-6 sm:px-8 sm:py-8">
+  <header class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+    <div>
+      <h1 class="text-xl font-semibold sm:text-2xl">Bot de Telegram · Clínica Soraka</h1>
+      <p class="text-muted mt-1 max-w-2xl text-sm sm:text-base">Opera el bot desde aquí: conexión, conversaciones en vivo, pruebas y respuestas.</p>
+    </div>
+    <div class="flex items-center gap-4">
+      <div class="flex items-start gap-2.5" role="status" aria-live="polite">
+        <span class="mt-1.5 h-2 w-2 shrink-0 rounded-full transition-colors duration-500" [class]="presenter.dot()" aria-hidden="true"></span>
+        <div>
+          <p class="text-sm font-medium">{{ f.health().title }}</p>
+          @if (f.health().detail) {
+            <p class="text-muted text-xs">{{ f.health().detail }}</p>
+          }
+        </div>
+      </div>
+      <button
+        type="button"
+        (click)="f.logout()"
+        class="border-border hover:bg-background focus-visible:ring-primary min-h-11 rounded-md border px-3 text-sm focus-visible:ring-2">
+        Cerrar sesión
+      </button>
+    </div>
+  </header>
+
+  <nav aria-label="Secciones del bot" class="border-border -mx-4 overflow-x-auto border-b px-4 sm:mx-0 sm:px-0">
+    <ul class="flex min-w-max gap-1">
+      @for (tab of presenter.tabs; track tab.path) {
+        <li>
+          <a
+            [routerLink]="tab.path"
+            routerLinkActive="border-primary text-foreground font-semibold"
+            ariaCurrentWhenActive="page"
+            class="focus-visible:ring-primary hover:text-foreground text-muted inline-flex min-h-11 items-center border-b-2 border-transparent px-3 text-[13px] font-medium transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-inset">
+            {{ tab.label }}
+            @if (tab.path === 'conversaciones' && f.unreadTotal() > 0) {
+              <span class="bg-primary animate-pop ml-2 min-w-5 rounded-full px-1.5 text-center text-xs font-semibold text-white">{{ f.unreadTotal() }}</span>
+            }
+          </a>
+        </li>
+      }
+    </ul>
+  </nav>
+
+  <router-outlet />
+</div>

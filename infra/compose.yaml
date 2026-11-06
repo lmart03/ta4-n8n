@@ -1,0 +1,97 @@
+services:
+  postgres:
+    image: postgres:17.11-bookworm
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:?configura POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER:?configura POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?configura POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+    networks: [private]
+
+  backend:
+    build: ../backend
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:?configura POSTGRES_DB}
+      DB_USER: ${POSTGRES_USER:?configura POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:?configura POSTGRES_PASSWORD}
+      RUC_STORAGE_DIR: /data/ruc-inbox
+      # Fuente alternativa (plan C) si SUNAT bloquea al robot; vacío = desactivada.
+      CONSULTA_RUC_API_TOKEN: ${CONSULTA_RUC_API_TOKEN:-}
+      # Panel del bot (la clave del panel y la de n8n son distintas; si faltan, el panel queda cerrado).
+      ADMIN_KEY: ${ADMIN_KEY:-}
+      BOT_INGEST_KEY: ${BOT_INGEST_KEY:-}
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:-}
+      TELEGRAM_WEBHOOK_SECRET: ${TELEGRAM_WEBHOOK_SECRET:-}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-3.5-flash-lite}
+    ports:
+      - "127.0.0.1:8080:8080"
+    volumes:
+      - ../rpa/inbox:/data/ruc-inbox
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    networks: [private]
+
+  frontend:
+    build: ../frontend
+    ports:
+      - "127.0.0.1:4280:80"
+    depends_on:
+      backend:
+        condition: service_started
+    restart: unless-stopped
+    networks: [private]
+
+  n8n:
+    image: n8nio/n8n:2.46.5
+    environment:
+      TZ: America/Lima
+      GENERIC_TIMEZONE: America/Lima
+      N8N_WEBHOOK_URL: ${N8N_WEBHOOK_URL:-http://localhost:5678/}
+      N8N_PROXY_HOPS: 1
+      N8N_ENCRYPTION_KEY: ${N8N_ENCRYPTION_KEY:?configura N8N_ENCRYPTION_KEY}
+      N8N_BLOCK_ENV_ACCESS_IN_NODE: "false"
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:-pendiente}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-pendiente}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-3.5-flash-lite}
+      TELEGRAM_WEBHOOK_SECRET: ${TELEGRAM_WEBHOOK_SECRET:-pendiente}
+      BOT_INGEST_KEY: ${BOT_INGEST_KEY:-}
+      EXECUTIONS_DATA_SAVE_ON_SUCCESS: "none"
+      EXECUTIONS_DATA_SAVE_ON_ERROR: "none"
+    ports:
+      - "127.0.0.1:5678:5678"
+    volumes:
+      - n8n_data:/home/node/.n8n
+    depends_on:
+      postgres:
+        condition: service_healthy
+      backend:
+        condition: service_started
+    restart: unless-stopped
+    networks: [private]
+
+  # Túnel público HTTPS hacia n8n (quick tunnel de Cloudflare). El backend lee su URL en :2000/quicktunnel y registra
+  # el webhook de Telegram solo. La URL cambia cada vez que este contenedor se reinicia.
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    command: tunnel --no-autoupdate --metrics 0.0.0.0:2000 --url http://n8n:5678
+    depends_on:
+      n8n:
+        condition: service_started
+    restart: unless-stopped
+    networks: [private]
+
+volumes:
+  postgres_data:
+  n8n_data:
+networks:
+  private:

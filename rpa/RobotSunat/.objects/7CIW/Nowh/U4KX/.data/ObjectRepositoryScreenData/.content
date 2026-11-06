@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-16"?>
+<ObjectRepositoryScreenData ContentHash="E5m2GYcb2kyskHCSVK5Edw" xmlns="http://schemas.uipath.com/workflow/activities/uix" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <ObjectRepositoryScreenData.Data>
+    <TargetApp x:Key="TargetApp" Area="-8, -8, 1936, 1048" BrowserType="Edge" Selector="&lt;html app='msedge.exe' title='Descarga multiple de RUC' url='https://e-consultaruc.sunat.gob.pe/cl-ti-itmrconsmulruc*' /&gt;" Url="https://e-consultaruc.sunat.gob.pe/cl-ti-itmrconsmulruc/jrmS00Alias" Version="V3">
+      <TargetApp.SapInfo>
+        <SAPElementInfo IsSapSubsystem="False" WebAutomationFramework="Default" />
+      </TargetApp.SapInfo>
+      <imageRef attrName="InformativeScreenshot" originalValue="2a28b4dd3ac312b5b89c867a0794b935.jpg" xmlns="">03EXee5SrSEuG8BL7MVtg7w</imageRef>
+    </TargetApp>
+    <NInteractionMode x:Key="InteractionMode">DebuggerApi</NInteractionMode>
+  </ObjectRepositoryScreenData.Data>
+</ObjectRepositoryScreenData>

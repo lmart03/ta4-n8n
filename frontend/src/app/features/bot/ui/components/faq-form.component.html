@@ -1,0 +1,83 @@
+<form (submit)="$event.preventDefault(); submit()" class="bg-surface border-border animate-rise flex flex-col gap-4 rounded-lg border p-4 shadow-[var(--shadow-card)] sm:p-5" novalidate>
+  <h3 class="text-base font-semibold">{{ faq() ? 'Editar pregunta' : 'Nueva pregunta' }}</h3>
+
+  @if (problem(); as p) {
+    <p class="bg-danger-soft text-danger-text rounded-md border border-red-200 px-3 py-2 text-sm" role="alert">{{ p.detail ?? p.title }}</p>
+  }
+
+  <div class="grid gap-4 sm:grid-cols-[14rem_1fr]">
+    <div>
+      <label for="faq-category" class="mb-1 block text-sm font-medium">Categoría</label>
+      <select
+        id="faq-category"
+        [value]="presenter.category()"
+        (change)="presenter.category.set(presenter.categoryOf($event))"
+        class="border-border focus:border-primary focus:ring-primary min-h-11 w-full rounded-md border bg-white text-sm">
+        @for (item of presenter.categories; track item.value) {
+          <option [value]="item.value" [selected]="item.value === presenter.category()">{{ item.label }}</option>
+        }
+      </select>
+    </div>
+    <div>
+      <label for="faq-question" class="mb-1 block text-sm font-medium">Pregunta del paciente</label>
+      <input
+        id="faq-question"
+        type="text"
+        [value]="presenter.question()"
+        (input)="presenter.question.set(presenter.text($event))"
+        [attr.aria-invalid]="presenter.errors().question ? 'true' : null"
+        aria-describedby="faq-question-error"
+        class="border-border focus:border-primary focus:ring-primary min-h-11 w-full rounded-md border bg-white px-3 text-sm" />
+      <p id="faq-question-error" class="text-danger-text mt-1 text-xs" [hidden]="!presenter.errors().question">{{ presenter.errors().question }}</p>
+    </div>
+  </div>
+
+  <div>
+    <label for="faq-answer" class="mb-1 block text-sm font-medium">Respuesta que dará el bot</label>
+    <textarea
+      id="faq-answer"
+      rows="3"
+      [value]="presenter.answer()"
+      (input)="presenter.answer.set(presenter.text($event))"
+      [attr.aria-invalid]="presenter.errors().answer ? 'true' : null"
+      aria-describedby="faq-answer-hint"
+      class="border-border focus:border-primary focus:ring-primary w-full rounded-md border bg-white px-3 py-2 text-sm"></textarea>
+    <p id="faq-answer-hint" class="mt-1 text-xs" [class]="presenter.errors().answer ? 'text-danger-text' : 'text-muted'">
+      {{ presenter.errors().answer ?? 'Solo datos confirmados: el bot no inventa precios ni horarios. ' + presenter.answer().length + '/' + presenter.limits.answer }}
+    </p>
+  </div>
+
+  <div>
+    <label for="faq-keywords" class="mb-1 block text-sm font-medium">Palabras clave <span class="text-muted font-normal">(opcional)</span></label>
+    <input
+      id="faq-keywords"
+      type="text"
+      [value]="presenter.keywords()"
+      (input)="presenter.keywords.set(presenter.text($event))"
+      aria-describedby="faq-keywords-hint"
+      class="border-border focus:border-primary focus:ring-primary min-h-11 w-full rounded-md border bg-white px-3 text-sm" />
+    <p id="faq-keywords-hint" class="mt-1 text-xs" [class]="presenter.errors().keywords ? 'text-danger-text' : 'text-muted'">
+      {{ presenter.errors().keywords ?? 'Separadas por espacio. Si lo dejas vacío se generan desde la pregunta.' }}
+    </p>
+  </div>
+
+  <label class="flex min-h-11 items-center gap-2 text-sm">
+    <input type="checkbox" [checked]="presenter.active()" (change)="presenter.active.set(presenter.checked($event))" class="text-primary focus:ring-primary h-4 w-4 rounded" />
+    Activa: el bot puede usar esta respuesta
+  </label>
+
+  <div class="flex flex-wrap justify-end gap-2">
+    <button
+      type="button"
+      (click)="dismiss.emit()"
+      class="border-border hover:bg-background focus-visible:ring-primary min-h-11 rounded-md border px-4 text-sm font-medium focus-visible:ring-2">
+      Cancelar
+    </button>
+    <button
+      type="submit"
+      [disabled]="busy()"
+      class="bg-primary hover:bg-primary-hover focus-visible:ring-primary min-h-11 rounded-md px-5 text-sm font-semibold text-white focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-60">
+      {{ busy() ? 'Guardando…' : 'Guardar' }}
+    </button>
+  </div>
+</form>

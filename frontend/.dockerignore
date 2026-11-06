@@ -1,0 +1,12 @@
+node_modules
+dist
+.angular
+.git
+.vscode
+coverage
+.env
+.env.*
+!.env.example
+*.md
+Dockerfile
+npm-debug.log*

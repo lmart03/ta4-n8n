@@ -1,0 +1,95 @@
+<section class="border-border bg-surface shadow-card flex flex-col gap-6 rounded-xl border p-5 sm:p-6" aria-labelledby="tracker-title">
+  <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+    <div>
+      <h2 id="tracker-title" class="text-base font-semibold">Seguimiento de la ejecución</h2>
+      <p class="text-muted text-sm" role="status" aria-live="polite">{{ flow().headline }}</p>
+    </div>
+    @if (flow().latestMessage; as latest) {
+      @if (flow().phase !== 'failed') {
+        <p class="text-muted max-w-xl truncate text-xs" [title]="latest">Último aviso: {{ latest }}</p>
+      }
+    }
+  </div>
+
+  <app-flow-stepper [stages]="flow().stages" />
+
+  @if (flow().hint; as hint) {
+    <p class="bg-warning-soft text-warning-text animate-rise rounded-lg border border-amber-200 px-4 py-3 text-sm" role="alert">{{ hint }}</p>
+  }
+
+  @if (flow().phase === 'attention') {
+    <p class="bg-warning-soft text-warning-text animate-rise rounded-lg border border-amber-200 px-4 py-3 text-sm" role="alert">
+      SUNAT pide una verificación. Resuélvela en la ventana de Edge; el robot continúa solo cuando termines.
+    </p>
+  }
+
+  @if (flow().phase === 'failed') {
+    @let explanation = presenter.explain(flow().latestMessage);
+    <div class="bg-danger-soft animate-rise flex flex-col gap-3 rounded-lg border border-red-200 p-4" role="alert">
+      <div>
+        <p class="text-danger-text font-semibold">{{ explanation.title }}</p>
+        <p class="text-sm text-slate-700">{{ explanation.advice }}</p>
+      </div>
+      @if (explanation.technical; as technical) {
+        <details class="text-sm">
+          <summary class="text-muted focus-visible:ring-primary min-h-11 cursor-pointer py-2 select-none focus-visible:ring-2">Ver detalle técnico</summary>
+          <pre class="bg-surface mt-1 overflow-x-auto rounded-md border border-red-100 p-3 text-xs whitespace-pre-wrap text-slate-700">{{ technical }}</pre>
+        </details>
+      }
+      @if (canRetry()) {
+        <div>
+          <button type="button" [class]="presenter.primaryButton" (click)="retry.emit()">Reintentar</button>
+        </div>
+      }
+    </div>
+  } @else if (problem(); as problem) {
+    <div class="bg-danger-soft animate-rise flex flex-col gap-3 rounded-lg border border-red-200 p-4" role="alert">
+      <div>
+        <p class="text-danger-text font-semibold">{{ problem.title }}</p>
+        @if (problem.detail) {
+          <p class="text-sm text-slate-700">{{ problem.detail }}</p>
+        }
+      </div>
+      @if (canRetry()) {
+        <div>
+          <button type="button" [class]="presenter.primaryButton" (click)="retry.emit()">Reintentar</button>
+        </div>
+      }
+    </div>
+  } @else if (canRetry()) {
+    <!-- El trabajo quedó listo pero el arranque nunca se pidió: se puede pedir ahora. -->
+    <div class="animate-rise">
+      <button type="button" [class]="presenter.primaryButton" (click)="retry.emit()">Empezar flujo</button>
+    </div>
+  }
+
+  @if (flow().phase !== 'done' && flow().phase !== 'idle') {
+    <app-manual-fallback
+      [inputUrl]="inputUrl()"
+      [busy]="busy()"
+      [open]="flow().phase === 'failed'"
+      (resultSelected)="manualResult.emit($event)"
+      (apiLookup)="apiLookup.emit()" />
+  }
+
+  @if (flow().phase === 'done') {
+    <div class="bg-primary-soft animate-rise flex flex-wrap items-center justify-between gap-4 rounded-lg border border-emerald-200 px-4 py-3" role="status">
+      <div class="flex items-center gap-3">
+        <span class="bg-primary flex h-9 w-9 shrink-0 animate-pop items-center justify-center rounded-full text-white" aria-hidden="true">
+          <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <path class="animate-draw" stroke-dasharray="24" d="m5 12 5 5L20 7" />
+          </svg>
+        </span>
+        <div>
+          <p class="text-primary font-semibold">Consulta completada</p>
+          @if (summary(); as text) {
+            <p class="text-sm text-slate-700">{{ text }}</p>
+          }
+        </div>
+      </div>
+      @if (exportUrl(); as url) {
+        <a [href]="url" download [class]="presenter.primaryButton">Descargar Excel</a>
+      }
+    </div>
+  }
+</section>

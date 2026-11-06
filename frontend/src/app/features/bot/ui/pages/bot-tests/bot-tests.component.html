@@ -1,0 +1,121 @@
+@let f = presenter.facade;
+<div class="flex flex-col gap-5">
+  <section class="bg-surface border-border flex flex-col gap-3 rounded-lg border p-4 shadow-[var(--shadow-card)] sm:p-5">
+    <div class="flex flex-wrap items-start justify-between gap-3">
+      <div>
+        <h2 class="text-base font-semibold">Matriz de pruebas PR-BOT</h2>
+        <p class="text-muted mt-1 max-w-2xl text-sm">
+          Envía cada pregunta por el mismo camino que Telegram (webhook de n8n, API y Gemini) y comprueba la respuesta. Las pruebas manuales
+          se documentan con captura.
+        </p>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        <button
+          type="button"
+          (click)="f.runSuite()"
+          [disabled]="presenter.running()"
+          class="bg-primary hover:bg-primary-hover focus-visible:ring-primary min-h-11 rounded-md px-5 text-sm font-semibold text-white focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60">
+          {{ presenter.running() ? 'Ejecutando…' : 'Ejecutar todas' }}
+        </button>
+        <button
+          type="button"
+          (click)="presenter.downloadCsv()"
+          [disabled]="!f.testRun()?.cases?.length"
+          class="border-border hover:bg-background focus-visible:ring-primary min-h-11 rounded-md border px-4 text-sm font-medium focus-visible:ring-2 disabled:opacity-50">
+          Exportar CSV
+        </button>
+      </div>
+    </div>
+
+    @if (presenter.problemText(); as text) {
+      <p class="bg-danger-soft text-danger-text rounded-md border border-red-200 px-3 py-2 text-sm" role="alert">{{ text }}</p>
+    }
+
+    @if (f.testRun()?.cases?.length) {
+      <p class="text-sm" role="status">
+        <span class="text-success font-semibold">{{ presenter.summary().passed }} pasaron</span> ·
+        <span [class]="presenter.summary().failed ? 'text-danger-text font-semibold' : 'text-muted'">{{ presenter.summary().failed }} fallaron</span> ·
+        <span class="text-muted">{{ presenter.summary().manual }} manuales · {{ presenter.summary().pending }} pendientes</span>
+      </p>
+    }
+
+    <div class="overflow-x-auto">
+      <table class="w-full min-w-[44rem] text-left text-sm">
+        <caption class="sr-only">Resultados de las pruebas del bot</caption>
+        <thead class="text-muted border-border border-b text-xs uppercase">
+          <tr>
+            <th scope="col" class="py-2 pr-3 font-medium">ID</th>
+            <th scope="col" class="py-2 pr-3 font-medium">Pregunta y respuesta</th>
+            <th scope="col" class="py-2 pr-3 font-medium">Se espera</th>
+            <th scope="col" class="py-2 pr-3 font-medium">Estado</th>
+            <th scope="col" class="py-2 font-medium">Latencia</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of f.testRun()?.cases ?? []; track item.id) {
+            @let view = presenter.status(item.status);
+            <tr class="border-border border-b align-top last:border-0">
+              <td class="py-3 pr-3 font-mono text-xs whitespace-nowrap">{{ item.id }}</td>
+              <td class="py-3 pr-3">
+                @if (item.question) {
+                  <p class="font-medium">{{ item.question }}</p>
+                }
+                @if (item.reply) {
+                  <p class="text-muted mt-1 break-words whitespace-pre-line">{{ item.reply }}</p>
+                  @if (item.source) {
+                    <p class="mt-1 text-xs"><span class="rounded bg-slate-100 px-1.5 py-px font-medium text-slate-700">{{ presenter.source(item.source) }}</span></p>
+                  }
+                }
+                @if (item.detail) {
+                  <p class="mt-1 text-xs" [class]="item.status === 'FAILED' ? 'text-danger-text' : 'text-muted'">{{ item.detail }}</p>
+                }
+              </td>
+              <td class="text-muted py-3 pr-3">{{ item.expected }}</td>
+              <td class="py-3 pr-3">
+                <span class="inline-block rounded-full px-2 py-0.5 text-xs font-medium whitespace-nowrap" [class]="view.badge">{{ view.word }}</span>
+              </td>
+              <td class="text-muted py-3 whitespace-nowrap">{{ presenter.latency(item.latencyMs) }}</td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="5" class="text-muted py-8 text-center">Pulsa «Ejecutar todas» para correr la matriz. Tarda unos segundos por pregunta.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="bg-surface border-border flex flex-col gap-3 rounded-lg border p-4 shadow-[var(--shadow-card)] sm:p-5">
+    <h2 class="text-base font-semibold">Probar una pregunta</h2>
+    <form (submit)="$event.preventDefault(); presenter.ask()" class="flex flex-col gap-2 sm:flex-row">
+      <label class="sr-only" for="test-question">Pregunta de prueba</label>
+      <input
+        id="test-question"
+        type="text"
+        maxlength="500"
+        [value]="presenter.question()"
+        (input)="presenter.onInput($event)"
+        placeholder="Por ejemplo: ¿Tienen pediatría?"
+        class="border-border focus:border-primary focus:ring-primary min-h-11 flex-1 rounded-md border bg-white px-3 text-sm" />
+      <button
+        type="submit"
+        [disabled]="f.asking() || presenter.question().trim() === ''"
+        class="bg-primary hover:bg-primary-hover focus-visible:ring-primary min-h-11 rounded-md px-5 text-sm font-semibold text-white focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60">
+        {{ f.asking() ? 'Esperando respuesta…' : 'Preguntar' }}
+      </button>
+    </form>
+    @if (f.askResult(); as result) {
+      <div class="bg-background border-border animate-rise rounded-md border p-3 text-sm" role="status">
+        @if (result.reply) {
+          <p class="whitespace-pre-line">{{ result.reply }}</p>
+          <p class="text-muted mt-2 text-xs">
+            {{ presenter.source(result.source) }} · {{ presenter.latency(result.latencyMs) }}
+          </p>
+        } @else {
+          <p class="text-danger-text">{{ result.detail }}</p>
+        }
+      </div>
+    }
+  </section>
+</div>

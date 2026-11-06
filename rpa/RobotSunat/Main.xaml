@@ -1,0 +1,336 @@
+<Activity mc:Ignorable="sap2010" x:Class="Main" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Drawing;assembly=System.Drawing.Common" xmlns:sd1="clr-namespace:System.Drawing;assembly=System.Drawing.Primitives" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:uix="http://schemas.uipath.com/workflow/activities/uix" xmlns:uwah="clr-namespace:UiPath.Web.Activities.Http;assembly=UiPath.Web.Activities" xmlns:uwahm="clr-namespace:UiPath.Web.Activities.Http.Models;assembly=UiPath.Web.Activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property Name="in_JobId" Type="InArgument(x:String)" />
+    <x:Property Name="in_ApiBase" Type="InArgument(x:String)" />
+    <x:Property Name="in_WorkFolder" Type="InArgument(x:String)" />
+    <x:Property Name="in_DownloadsFolder" Type="InArgument(x:String)" />
+    <x:Property Name="in_FirstWaitSeconds" Type="InArgument(x:Int32)" />
+    <x:Property Name="in_InterventionWaitSeconds" Type="InArgument(x:Int32)" />
+  </x:Members>
+  <VisualBasic.Settings>
+    <x:Null />
+  </VisualBasic.Settings>
+  <sap2010:WorkflowViewState.IdRef>ActivityBuilder_1</sap2010:WorkflowViewState.IdRef>
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Activities.Expressions</x:String>
+      <x:String>System.Activities.Validation</x:String>
+      <x:String>System.Activities.XamlIntegration</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>Microsoft.VisualBasic.Activities</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Collections</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.Diagnostics</x:String>
+      <x:String>System.Drawing</x:String>
+      <x:String>System.IO</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>System.Net.Mail</x:String>
+      <x:String>System.Xml</x:String>
+      <x:String>System.Xml.Linq</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+      <x:String>UiPath.Web.Activities.Http</x:String>
+      <x:String>UiPath.Web.Activities.Http.Models</x:String>
+      <x:String>System.Windows.Markup</x:String>
+      <x:String>GlobalVariablesNamespace</x:String>
+      <x:String>GlobalConstantsNamespace</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.Data.Common</AssemblyReference>
+      <AssemblyReference>System.Drawing</AssemblyReference>
+      <AssemblyReference>System.Drawing.Primitives</AssemblyReference>
+      <AssemblyReference>System.Drawing.Common</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Xml</AssemblyReference>
+      <AssemblyReference>System.Xml.Linq</AssemblyReference>
+      <AssemblyReference>PresentationFramework</AssemblyReference>
+      <AssemblyReference>WindowsBase</AssemblyReference>
+      <AssemblyReference>PresentationCore</AssemblyReference>
+      <AssemblyReference>System.Xaml</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.UiAutomation.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.Web.Activities</AssemblyReference>
+      <AssemblyReference>System.Data.DataSetExtensions</AssemblyReference>
+      <AssemblyReference>System.Net.Mail</AssemblyReference>
+      <AssemblyReference>System.Net.Primitives</AssemblyReference>
+      <AssemblyReference>System.ObjectModel</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.TypeConverter</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence DisplayName="Robot SUNAT: Consulta Múltiple de RUC" sap2010:WorkflowViewState.IdRef="Sequence_1">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="x:String" Name="jobUrl" />
+      <Variable x:TypeArguments="x:String" Name="workFolder" />
+      <Variable x:TypeArguments="x:String" Name="downloadsFolder" />
+      <Variable x:TypeArguments="x:String" Name="txtPath" />
+      <Variable x:TypeArguments="x:String" Name="zipPath" />
+      <Variable x:TypeArguments="s:DateTime" Name="startedAt" />
+      <Variable x:TypeArguments="x:Int32" Name="firstWait" />
+      <Variable x:TypeArguments="x:Int32" Name="waitLimit" />
+      <Variable x:TypeArguments="x:Boolean" Default="False" Name="intervened" />
+      <Variable x:TypeArguments="uwahm:HttpResponseSummary" Name="getResponse" />
+      <Variable x:TypeArguments="uwahm:HttpResponseSummary" Name="postResponse" />
+    </Sequence.Variables>
+    <ui:MultipleAssign DisplayName="Preparar rutas y tiempos" sap2010:WorkflowViewState.IdRef="MultipleAssign_1">
+      <ui:MultipleAssign.AssignOperations>
+        <scg:List x:TypeArguments="ui:AssignOperation" Capacity="8">
+          <ui:AssignOperation>
+            <ui:AssignOperation.To>
+              <OutArgument x:TypeArguments="x:String">[jobUrl]</OutArgument>
+            </ui:AssignOperation.To>
+            <ui:AssignOperation.Value>
+              <InArgument x:TypeArguments="x:String">[If(String.IsNullOrWhiteSpace(in_ApiBase), "http://localhost:8080/api/v1/ruc/jobs", in_ApiBase.Trim().TrimEnd("/"c)) &amp; "/" &amp; in_JobId.Trim()]</InArgument>
+            </ui:AssignOperation.Value>
+          </ui:AssignOperation>
+          <ui:AssignOperation>
+            <ui:AssignOperation.To>
+              <OutArgument x:TypeArguments="x:String">[workFolder]</OutArgument>
+            </ui:AssignOperation.To>
+            <ui:AssignOperation.Value>
+              <InArgument x:TypeArguments="x:String">[If(String.IsNullOrWhiteSpace(in_WorkFolder), System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TA4-RUC"), in_WorkFolder)]</InArgument>
+            </ui:AssignOperation.Value>
+          </ui:AssignOperation>
+          <ui:AssignOperation>
+            <ui:AssignOperation.To>
+              <OutArgument x:TypeArguments="x:String">[downloadsFolder]</OutArgument>
+            </ui:AssignOperation.To>
+            <ui:AssignOperation.Value>
+              <InArgument x:TypeArguments="x:String">[If(String.IsNullOrWhiteSpace(in_DownloadsFolder), System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads"), in_DownloadsFolder)]</InArgument>
+            </ui:AssignOperation.Value>
+          </ui:AssignOperation>
+          <ui:AssignOperation>
+            <ui:AssignOperation.To>
+              <OutArgument x:TypeArguments="x:String">[txtPath]</OutArgument>
+            </ui:AssignOperation.To>
+            <ui:AssignOperation.Value>
+              <InArgument x:TypeArguments="x:String">[System.IO.Path.Combine(workFolder, "consulta_ruc_" &amp; in_JobId.Trim() &amp; ".txt")]</InArgument>
+            </ui:AssignOperation.Value>
+          </ui:AssignOperation>
+          <ui:AssignOperation>
+            <ui:AssignOperation.To>
+              <OutArgument x:TypeArguments="x:Int32">[firstWait]</OutArgument>
+            </ui:AssignOperation.To>
+            <ui:AssignOperation.Value>
+              <InArgument x:TypeArguments="x:Int32">[If(in_FirstWaitSeconds &gt; 0, in_FirstWaitSeconds, 90)]</InArgument>
+            </ui:AssignOperation.Value>
+          </ui:AssignOperation>
+          <ui:AssignOperation>
+            <ui:AssignOperation.To>
+              <OutArgument x:TypeArguments="x:Int32">[waitLimit]</OutArgument>
+            </ui:AssignOperation.To>
+            <ui:AssignOperation.Value>
+              <InArgument x:TypeArguments="x:Int32">[firstWait]</InArgument>
+            </ui:AssignOperation.Value>
+          </ui:AssignOperation>
+        </scg:List>
+      </ui:MultipleAssign.AssignOperations>
+    </ui:MultipleAssign>
+    <ui:LogMessage DisplayName="Log: inicio" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[&quot;Iniciando la consulta múltiple del trabajo &quot; &amp; in_JobId.Trim() &amp; &quot; (&quot; &amp; jobUrl &amp; &quot;)&quot;]" />
+    <TryCatch DisplayName="Consultar en SUNAT y entregar el ZIP" sap2010:WorkflowViewState.IdRef="TryCatch_1">
+      <TryCatch.Try>
+        <Sequence DisplayName="Descargar TXT, subirlo a SUNAT y entregar el ZIP" sap2010:WorkflowViewState.IdRef="Sequence_2">
+          <ui:CreateDirectory ContinueOnError="{x:Null}" Output="{x:Null}" DisplayName="Crear carpeta de trabajo" sap2010:WorkflowViewState.IdRef="CreateDirectory_1" Path="[workFolder]" />
+          <uwah:NetHttpRequest BasicAuthPassword="{x:Null}" BasicAuthSecurePassword="{x:Null}" BasicAuthUsername="{x:Null}" BinaryPayload="{x:Null}" ClientCertPassword="{x:Null}" ClientCertPath="{x:Null}" ClientCertSecurePassword="{x:Null}" Cookies="{x:Null}" CustomNegotiatedAuthCredentials="{x:Null}" FilePath="{x:Null}" FormData="{x:Null}" FormDataParts="{x:Null}" Headers="{x:Null}" LocalFiles="{x:Null}" OAuthToken="{x:Null}" Parameters="{x:Null}" PathResource="{x:Null}" ProxyConfiguration="{x:Null}" ResourceFiles="{x:Null}" RetryStatusCodes="{x:Null}" TextPayload="{x:Null}" AuthenticationType="None" ContinueOnError="True" DisableSslVerification="False" DisplayName="GET TXT para SUNAT" EnableCookies="True" FileOverwrite="Replace" FollowRedirects="True" sap2010:WorkflowViewState.IdRef="NetHttpRequest_1" InitialDelay="500" MaxRedirects="3" MaxRetryAfterDelay="30000" Method="GET" Multiplier="2" OutputFileName="[System.IO.Path.GetFileName(txtPath)]" OutputFileTargetFolder="[workFolder]" PreferRetryAfterValue="True" RequestBodyType="None" RequestUrl="[jobUrl + &quot;/input&quot;]" Result="[getResponse]" RetryCount="3" SaveRawRequestResponse="False" SaveResponseAsFile="True" TextPayloadContentType="application/json" TextPayloadEncoding="UTF-8" TlsProtocol="Automatic" UseJitter="True" UseOsNegotiatedAuthCredentials="True">
+            <uwah:NetHttpRequest.TimeoutInMiliseconds>
+              <InArgument x:TypeArguments="s:Nullable(x:Int32)">
+                <Literal x:TypeArguments="s:Nullable(x:Int32)" Value="10000" />
+              </InArgument>
+            </uwah:NetHttpRequest.TimeoutInMiliseconds>
+          </uwah:NetHttpRequest>
+          <If Condition="[getResponse Is Nothing OrElse CInt(getResponse.StatusCode) &lt;&gt; 200 OrElse Not System.IO.File.Exists(txtPath)]" DisplayName="¿No se pudo descargar el TXT?" sap2010:WorkflowViewState.IdRef="If_1">
+            <If.Then>
+              <Sequence DisplayName="Abortar" sap2010:WorkflowViewState.IdRef="Sequence_3">
+                <Throw DisplayName="Error: TXT no descargado" Exception="[New Exception(&quot;No se pudo descargar el TXT del trabajo (HTTP &quot; &amp; If(getResponse Is Nothing, &quot;?&quot;, CInt(getResponse.StatusCode).ToString()) &amp; &quot;): &quot; &amp; If(getResponse Is Nothing, String.Empty, getResponse.TextContent))]" sap2010:WorkflowViewState.IdRef="Throw_1" />
+              </Sequence>
+            </If.Then>
+          </If>
+          <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Informar: EN_CONSULTA" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_1" UnSafe="False" WorkflowFileName="Workflows\ReportStatus.xaml">
+            <ui:InvokeWorkflowFile.Arguments>
+              <InArgument x:TypeArguments="x:String" x:Key="in_JobUrl">[jobUrl]</InArgument>
+              <InArgument x:TypeArguments="x:String" x:Key="in_Status">["EN_CONSULTA"]</InArgument>
+              <InArgument x:TypeArguments="x:String" x:Key="in_Message">["Subiendo el TXT a la Consulta Múltiple de SUNAT"]</InArgument>
+            </ui:InvokeWorkflowFile.Arguments>
+          </ui:InvokeWorkflowFile>
+          <Assign DisplayName="Marcar la hora de inicio" sap2010:WorkflowViewState.IdRef="Assign_1">
+            <Assign.To>
+              <OutArgument x:TypeArguments="s:DateTime">[startedAt]</OutArgument>
+            </Assign.To>
+            <Assign.Value>
+              <InArgument x:TypeArguments="s:DateTime">[DateTime.Now]</InArgument>
+            </Assign.Value>
+          </Assign>
+          <uix:NApplicationCard AttachMode="ByInstance" CloseMode="IfOpenedByAppBrowser" DisplayName="Edge: Consulta Múltiple de RUC (SUNAT)" HealingAgentBehavior="Job" sap2010:WorkflowViewState.IdRef="NApplicationCard_1" InteractionMode="DebuggerApi" OpenMode="IfNotOpen" ScopeGuid="7d1c2f0e-4b8a-4c53-9f6e-2a9d5b7c1e34" Version="V2">
+            <uix:NApplicationCard.Body>
+              <ActivityAction x:TypeArguments="x:Object">
+                <ActivityAction.Argument>
+                  <DelegateInArgument x:TypeArguments="x:Object" Name="WSSessionData" />
+                </ActivityAction.Argument>
+                <Sequence DisplayName="Hacer" sap2010:WorkflowViewState.IdRef="Sequence_4">
+                  <uix:NClick ActivateBefore="False" ClickType="Single" DisplayName="Clic: pestaña Validar mediante archivo" HealingAgentBehavior="SameAsCard" sap2010:WorkflowViewState.IdRef="NClick_1" KeyModifiers="None" MouseButton="Left" Version="V5">
+                    <uix:NClick.Target>
+                      <uix:TargetAnchorable ContentHash="uE_pPUiOgU6RCoL7hTO84g" DesignTimeRectangle="737, 129, 185, 42" ElementType="Text" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl aaname='Validar mediante archivo' data-toggle='tab' tag='A' /&gt;" Guid="4e4e048d-afc9-47da-8249-4f63caf64bc9" InformativeScreenshot="d5c675a3e50e8b00cccb3f60458d2cda.jpg" Reference="yAE0NrFs00uPjw0rptqV2g/Ay5a5S3WvEKjpe_vYryonQ" ScopeSelectorArgument="&lt;html app='msedge.exe' title='Descarga multiple de RUC' url='https://e-consultaruc.sunat.gob.pe/cl-ti-itmrconsmulruc*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
+                    </uix:NClick.Target>
+                  </uix:NClick>
+                  <uix:NBrowserFilePickerScope DisplayName="Responder al selector de archivos con el TXT" sap2010:WorkflowViewState.IdRef="NBrowserFilePickerScope_1" SingleFilePath="[txtPath]" Version="V5" WaitForDialogToAppearTimeout="30">
+                    <uix:NBrowserFilePickerScope.Body>
+                      <Sequence DisplayName="Acciones que desencadenan el selector de archivos" sap2010:WorkflowViewState.IdRef="Sequence_5">
+                        <uix:NClick ActivateBefore="True" ClickType="Single" DisplayName="Clic: Seleccionar archivo" HealingAgentBehavior="SameAsCard" sap2010:WorkflowViewState.IdRef="NClick_2" InteractionMode="HardwareEvents" KeyModifiers="None" MouseButton="Left" Version="V5">
+                          <uix:NClick.Target>
+                            <uix:TargetAnchorable ContentHash="8A8epK92rkm12eJ3YvrTiA" DesignTimeRectangle="712, 448, 388, 24" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl id='form02' tag='FORM' /&gt;&lt;webctrl id='txtfile' tag='INPUT' /&gt;" Guid="a58ba57d-cef3-40c2-9c83-71491bcf2576" InformativeScreenshot="15730a8699e2dd9f2dea5163e4c8c1cc.jpg" Reference="yAE0NrFs00uPjw0rptqV2g/iC0OJJ35Vk6o17kUxkZ2Og" ScopeSelectorArgument="&lt;html app='msedge.exe' title='Descarga multiple de RUC' url='https://e-consultaruc.sunat.gob.pe/cl-ti-itmrconsmulruc*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
+                          </uix:NClick.Target>
+                        </uix:NClick>
+                      </Sequence>
+                    </uix:NBrowserFilePickerScope.Body>
+                  </uix:NBrowserFilePickerScope>
+                  <uix:NClick ActivateBefore="False" ClickType="Single" DisplayName="Clic: Enviar" HealingAgentBehavior="SameAsCard" sap2010:WorkflowViewState.IdRef="NClick_3" KeyModifiers="None" MouseButton="Left" Version="V5">
+                    <uix:NClick.Target>
+                      <uix:TargetAnchorable ContentHash="7eDo-XqH0kuzoYD1wwat9g" DesignTimeRectangle="512, 492, 65, 34" ElementType="Button" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl id='form02' tag='FORM' /&gt;&lt;webctrl id='divAccionesRucArch' tag='DIV' /&gt;&lt;webctrl id='btnBuscarBandAutImp' tag='BUTTON' /&gt;" Guid="d04b5d03-73c8-4496-abb8-3cc73f6fc900" InformativeScreenshot="66926478f6b49db4895a0e541d5bef5a.jpg" Reference="yAE0NrFs00uPjw0rptqV2g/bf1QwKVPTUSSYiPcLrGwfg" ScopeSelectorArgument="&lt;html app='msedge.exe' title='Descarga multiple de RUC' url='https://e-consultaruc.sunat.gob.pe/cl-ti-itmrconsmulruc*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
+                    </uix:NClick.Target>
+                  </uix:NClick>
+                  <uix:NClick ActivateBefore="False" ClickType="Single" DisplayName="Clic: enlace de descarga del ZIP" HealingAgentBehavior="SameAsCard" sap2010:WorkflowViewState.IdRef="NClick_4" KeyModifiers="None" MouseButton="Left" Timeout="5" Version="V5">
+                    <uix:NClick.Target>
+                      <uix:TargetAnchorable ContentHash="k_QW4o_re0e7aEb6bUFVrg" DesignTimeRectangle="1054, 702, 175, 16" ElementType="Text" ElementVisibilityArgument="Interactive" FullSelectorArgument="&lt;webctrl href='https://www.sunat.gob.pe/cl-at-framework-unloadfile/descargaArchivoAlias?data0_num_id=*' tag='A' /&gt;" Guid="524b3fdf-5c68-4148-b638-4315d2fa4172" InformativeScreenshot="85949fadac973912c058954930cda222.jpg" Reference="yAE0NrFs00uPjw0rptqV2g/IrapQzt3gUWHZ7FipZsG9g" ScopeSelectorArgument="&lt;html app='msedge.exe' title='*Opción de Múltiples Rucs*' url='https://e-consultaruc.sunat.gob.pe/cl-ti-itmrconsmulruc*' idx='*' /&gt;" SearchSteps="Selector" Version="V6" WaitForReadyArgument="Interactive" />
+                    </uix:NClick.Target>
+                  </uix:NClick>
+                  <ui:LogMessage DisplayName="Log: archivo enviado" sap2010:WorkflowViewState.IdRef="LogMessage_2" Level="Info" Message="[&quot;TXT enviado a SUNAT; esperando el ZIP en &quot; &amp; downloadsFolder]" />
+                  <ui:InterruptibleWhile CurrentIndex="{x:Null}" Condition="[String.IsNullOrEmpty(zipPath) AndAlso (DateTime.Now - startedAt).TotalSeconds &lt; waitLimit]" DisplayName="Esperar el ZIP descargado" sap2010:WorkflowViewState.IdRef="InterruptibleWhile_1">
+                    <ui:InterruptibleWhile.Body>
+                      <Sequence DisplayName="Buscar el ZIP" sap2010:WorkflowViewState.IdRef="Sequence_6">
+                        <Assign DisplayName="Buscar el RM*.zip más reciente" sap2010:WorkflowViewState.IdRef="Assign_2">
+                          <Assign.To>
+                            <OutArgument x:TypeArguments="x:String">[zipPath]</OutArgument>
+                          </Assign.To>
+                          <Assign.Value>
+                            <InArgument x:TypeArguments="x:String">[System.IO.Directory.GetFiles(downloadsFolder, "RM*.zip").Where(Function(f) System.IO.File.GetLastWriteTime(f) &gt;= startedAt.AddSeconds(-5)).OrderByDescending(Function(f) System.IO.File.GetLastWriteTime(f)).FirstOrDefault()]</InArgument>
+                          </Assign.Value>
+                        </Assign>
+                        <If Condition="[String.IsNullOrEmpty(zipPath)]" DisplayName="¿Aún no llega el ZIP?" sap2010:WorkflowViewState.IdRef="If_2">
+                          <If.Then>
+                            <Sequence DisplayName="Esperar o pedir ayuda" sap2010:WorkflowViewState.IdRef="Sequence_7">
+                              <If Condition="[Not intervened AndAlso (DateTime.Now - startedAt).TotalSeconds &gt;= firstWait]" DisplayName="¿Se acabó la espera inicial y nadie intervino?" sap2010:WorkflowViewState.IdRef="If_3">
+                                <If.Then>
+                                  <Sequence DisplayName="Pedir intervención humana" sap2010:WorkflowViewState.IdRef="Sequence_8">
+                                    <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Informar: REQUIERE_INTERVENCION" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_2" UnSafe="False" WorkflowFileName="Workflows\ReportStatus.xaml">
+                                      <ui:InvokeWorkflowFile.Arguments>
+                                        <InArgument x:TypeArguments="x:String" x:Key="in_JobUrl">[jobUrl]</InArgument>
+                                        <InArgument x:TypeArguments="x:String" x:Key="in_Status">["REQUIERE_INTERVENCION"]</InArgument>
+                                        <InArgument x:TypeArguments="x:String" x:Key="in_Message">["SUNAT no entregó el ZIP: revisa el navegador por si hay una verificación pendiente y resuélvela a mano."]</InArgument>
+                                      </ui:InvokeWorkflowFile.Arguments>
+                                    </ui:InvokeWorkflowFile>
+                                    <ui:MultipleAssign DisplayName="Extender la espera" sap2010:WorkflowViewState.IdRef="MultipleAssign_2">
+                                      <ui:MultipleAssign.AssignOperations>
+                                        <scg:List x:TypeArguments="ui:AssignOperation" Capacity="4">
+                                          <ui:AssignOperation>
+                                            <ui:AssignOperation.To>
+                                              <OutArgument x:TypeArguments="x:Boolean">[intervened]</OutArgument>
+                                            </ui:AssignOperation.To>
+                                            <ui:AssignOperation.Value>
+                                              <InArgument x:TypeArguments="x:Boolean">[True]</InArgument>
+                                            </ui:AssignOperation.Value>
+                                          </ui:AssignOperation>
+                                          <ui:AssignOperation>
+                                            <ui:AssignOperation.To>
+                                              <OutArgument x:TypeArguments="x:Int32">[waitLimit]</OutArgument>
+                                            </ui:AssignOperation.To>
+                                            <ui:AssignOperation.Value>
+                                              <InArgument x:TypeArguments="x:Int32">[firstWait + If(in_InterventionWaitSeconds &gt; 0, in_InterventionWaitSeconds, 600)]</InArgument>
+                                            </ui:AssignOperation.Value>
+                                          </ui:AssignOperation>
+                                        </scg:List>
+                                      </ui:MultipleAssign.AssignOperations>
+                                    </ui:MultipleAssign>
+                                  </Sequence>
+                                </If.Then>
+                              </If>
+                              <Delay DisplayName="Esperar 2 segundos" Duration="[TimeSpan.FromSeconds(2)]" sap2010:WorkflowViewState.IdRef="Delay_1" />
+                            </Sequence>
+                          </If.Then>
+                        </If>
+                      </Sequence>
+                    </ui:InterruptibleWhile.Body>
+                  </ui:InterruptibleWhile>
+                </Sequence>
+              </ActivityAction>
+            </uix:NApplicationCard.Body>
+            <uix:NApplicationCard.OCREngine>
+              <ActivityFunc x:TypeArguments="sd:Image, scg:IEnumerable(scg:KeyValuePair(sd1:Rectangle, x:String))">
+                <ActivityFunc.Argument>
+                  <DelegateInArgument x:TypeArguments="sd:Image" Name="Image" />
+                </ActivityFunc.Argument>
+              </ActivityFunc>
+            </uix:NApplicationCard.OCREngine>
+            <uix:NApplicationCard.TargetApp>
+              <uix:TargetApp Area="-8, -8, 1936, 1048" BrowserType="Edge" ContentHash="E5m2GYcb2kyskHCSVK5Edw" InformativeScreenshot="2a28b4dd3ac312b5b89c867a0794b935.jpg" Reference="yAE0NrFs00uPjw0rptqV2g/U4KXygr4oEqTVDhXHYJcug" Selector="&lt;html app='msedge.exe' title='Descarga multiple de RUC' url='https://e-consultaruc.sunat.gob.pe/cl-ti-itmrconsmulruc*' /&gt;" Url="https://e-consultaruc.sunat.gob.pe/cl-ti-itmrconsmulruc/jrmS00Alias" Version="V3">
+                <uix:TargetApp.SapInfo>
+                  <uix:SAPElementInfo IsSapSubsystem="False" WebAutomationFramework="Default" />
+                </uix:TargetApp.SapInfo>
+              </uix:TargetApp>
+            </uix:NApplicationCard.TargetApp>
+          </uix:NApplicationCard>
+          <If Condition="[String.IsNullOrEmpty(zipPath)]" DisplayName="¿Nunca llegó el ZIP?" sap2010:WorkflowViewState.IdRef="If_4">
+            <If.Then>
+              <Sequence DisplayName="Abortar" sap2010:WorkflowViewState.IdRef="Sequence_9">
+                <Throw DisplayName="Error: ZIP no recibido" Exception="[New Exception(&quot;SUNAT no entregó el ZIP de resultados en &quot; &amp; waitLimit.ToString() &amp; &quot; segundos (carpeta de descargas: &quot; &amp; downloadsFolder &amp; &quot;).&quot;)]" sap2010:WorkflowViewState.IdRef="Throw_2" />
+              </Sequence>
+            </If.Then>
+          </If>
+          <Delay DisplayName="Dejar que termine de escribirse el ZIP" Duration="[TimeSpan.FromSeconds(1)]" sap2010:WorkflowViewState.IdRef="Delay_2" />
+          <ui:LogMessage DisplayName="Log: ZIP encontrado" sap2010:WorkflowViewState.IdRef="LogMessage_3" Level="Info" Message="[&quot;ZIP de SUNAT: &quot; &amp; zipPath &amp; &quot; (&quot; &amp; New System.IO.FileInfo(zipPath).Length.ToString() &amp; &quot; bytes)&quot;]" />
+          <uwah:NetHttpRequest BasicAuthPassword="{x:Null}" BasicAuthSecurePassword="{x:Null}" BasicAuthUsername="{x:Null}" BinaryPayload="{x:Null}" ClientCertPassword="{x:Null}" ClientCertPath="{x:Null}" ClientCertSecurePassword="{x:Null}" Cookies="{x:Null}" CustomNegotiatedAuthCredentials="{x:Null}" FilePath="{x:Null}" FormData="{x:Null}" Headers="{x:Null}" LocalFiles="{x:Null}" OAuthToken="{x:Null}" OutputFileName="{x:Null}" OutputFileTargetFolder="{x:Null}" Parameters="{x:Null}" PathResource="{x:Null}" ProxyConfiguration="{x:Null}" ResourceFiles="{x:Null}" RetryStatusCodes="{x:Null}" TextPayload="{x:Null}" AuthenticationType="None" ContinueOnError="True" DisableSslVerification="False" DisplayName="POST ZIP de resultados" EnableCookies="True" FileOverwrite="AutoRename" FollowRedirects="True" FormDataParts="[New List(Of FormDataPart) From {New FileFormDataPart(zipPath, &quot;file&quot;)}]" sap2010:WorkflowViewState.IdRef="NetHttpRequest_2" InitialDelay="500" MaxRedirects="3" MaxRetryAfterDelay="30000" Method="POST" Multiplier="2" PreferRetryAfterValue="True" RequestBodyType="MultipartFormData" RequestUrl="[jobUrl + &quot;/result&quot;]" Result="[postResponse]" RetryCount="3" RetryPolicyType="None" SaveRawRequestResponse="False" SaveResponseAsFile="False" TextPayloadContentType="application/json" TextPayloadEncoding="UTF-8" TlsProtocol="Automatic" UseJitter="True" UseOsNegotiatedAuthCredentials="True">
+            <uwah:NetHttpRequest.TimeoutInMiliseconds>
+              <InArgument x:TypeArguments="s:Nullable(x:Int32)">
+                <Literal x:TypeArguments="s:Nullable(x:Int32)" Value="10000" />
+              </InArgument>
+            </uwah:NetHttpRequest.TimeoutInMiliseconds>
+          </uwah:NetHttpRequest>
+          <If Condition="[postResponse Is Nothing OrElse CInt(postResponse.StatusCode) &lt;&gt; 200]" DisplayName="¿El backend rechazó el ZIP?" sap2010:WorkflowViewState.IdRef="If_5">
+            <If.Then>
+              <Sequence DisplayName="Abortar" sap2010:WorkflowViewState.IdRef="Sequence_10">
+                <Throw DisplayName="Error: ZIP no aceptado" Exception="[New Exception(&quot;El backend no aceptó el ZIP (HTTP &quot; &amp; If(postResponse Is Nothing, &quot;?&quot;, CInt(postResponse.StatusCode).ToString()) &amp; &quot;): &quot; &amp; If(postResponse Is Nothing, String.Empty, postResponse.TextContent))]" sap2010:WorkflowViewState.IdRef="Throw_3" />
+              </Sequence>
+            </If.Then>
+            <If.Else>
+              <Sequence DisplayName="Éxito" sap2010:WorkflowViewState.IdRef="Sequence_11">
+                <ui:LogMessage DisplayName="Log: resultado entregado" sap2010:WorkflowViewState.IdRef="LogMessage_4" Level="Info" Message="[&quot;Resultado entregado al backend: &quot; &amp; postResponse.TextContent]" />
+              </Sequence>
+            </If.Else>
+          </If>
+        </Sequence>
+      </TryCatch.Try>
+      <TryCatch.Catches>
+        <Catch x:TypeArguments="s:Exception">
+          <ActivityAction x:TypeArguments="s:Exception">
+            <ActivityAction.Argument>
+              <DelegateInArgument x:TypeArguments="s:Exception" Name="exception" />
+            </ActivityAction.Argument>
+            <Sequence DisplayName="Informar el fallo y relanzar" sap2010:WorkflowViewState.IdRef="Sequence_12">
+              <ui:LogMessage DisplayName="Log: error" sap2010:WorkflowViewState.IdRef="LogMessage_5" Level="Error" Message="[&quot;El robot falló: &quot; &amp; exception.Message]" />
+              <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Informar: FALLIDO" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_3" UnSafe="False" WorkflowFileName="Workflows\ReportStatus.xaml">
+                <ui:InvokeWorkflowFile.Arguments>
+                  <InArgument x:TypeArguments="x:String" x:Key="in_JobUrl">[jobUrl]</InArgument>
+                  <InArgument x:TypeArguments="x:String" x:Key="in_Status">["FALLIDO"]</InArgument>
+                  <InArgument x:TypeArguments="x:String" x:Key="in_Message">[If(exception.Message.Length &gt; 400, exception.Message.Substring(0, 400), exception.Message)]</InArgument>
+                </ui:InvokeWorkflowFile.Arguments>
+              </ui:InvokeWorkflowFile>
+              <Rethrow DisplayName="Relanzar" sap2010:WorkflowViewState.IdRef="Rethrow_1" />
+            </Sequence>
+          </ActivityAction>
+        </Catch>
+      </TryCatch.Catches>
+    </TryCatch>
+  </Sequence>
+</Activity>

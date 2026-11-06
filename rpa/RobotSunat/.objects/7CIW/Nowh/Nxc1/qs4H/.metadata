@@ -1,0 +1,15 @@
+﻿{
+  "Name": "Boton Buscar",
+  "Description": "Boton Buscar de la pantalla de criterios de busqueda",
+  "Type": "Element",
+  "TaxonomyType": "Button",
+  "Id": "qs4HnKgYbUKtED8Q3L2_zw",
+  "Reference": "yAE0NrFs00uPjw0rptqV2g/qs4HnKgYbUKtED8Q3L2_zw",
+  "ParentRef": "yAE0NrFs00uPjw0rptqV2g/Nxc1XO7fPUWddxv6qUIEZw",
+  "Created": "2026-11-05T19:51:29.7906445Z",
+  "Updated": "2026-11-05T19:51:29.7906445Z",
+  "CreatedBy": [
+    "UiPath.UIAutomationCore, Version=26.10.7.0, Culture=neutral, PublicKeyToken=null",
+    "UiPath.Platform, Version=26.4.0.0, Culture=neutral, PublicKeyToken=null"
+  ]
+}

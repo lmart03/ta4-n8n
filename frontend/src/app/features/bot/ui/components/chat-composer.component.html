@@ -1,0 +1,26 @@
+<form (submit)="$event.preventDefault(); submit()" class="border-border bg-surface border-t p-3 sm:px-4">
+  @if (mode() === 'BOT') {
+    <p class="text-muted mb-2 text-xs">Al enviar tomarás este chat: el bot dejará de responder hasta que lo devuelvas.</p>
+  }
+  <div class="flex items-end gap-2">
+    <label class="sr-only" for="reply-text">Mensaje para el paciente</label>
+    <textarea
+      id="reply-text"
+      rows="2"
+      [value]="presenter.text()"
+      (input)="presenter.onInput($event)"
+      (keydown)="onKey($event)"
+      [disabled]="busy()"
+      placeholder="Escribe una respuesta… (Enter envía, Mayús+Enter salta de línea)"
+      class="border-border focus:border-primary focus:ring-primary min-h-11 flex-1 resize-none rounded-md border bg-white px-3 py-2 text-sm"></textarea>
+    <button
+      type="submit"
+      [disabled]="!presenter.canSend() || busy()"
+      class="bg-primary hover:bg-primary-hover focus-visible:ring-primary min-h-11 shrink-0 rounded-md px-5 text-sm font-semibold text-white focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
+      {{ busy() ? 'Enviando…' : 'Enviar' }}
+    </button>
+  </div>
+  @if (presenter.tooLong()) {
+    <p class="text-danger-text mt-1 text-xs" role="alert">El mensaje supera los {{ presenter.max }} caracteres ({{ presenter.length() }}).</p>
+  }
+</form>

@@ -1,0 +1,15 @@
+﻿{
+  "Name": "Campo RUC",
+  "Description": "Caja de texto Ingrese RUC en la busqueda por RUC",
+  "Type": "Element",
+  "TaxonomyType": "Input",
+  "Id": "-Do7ErI7dUe8DhSeoUmXqw",
+  "Reference": "yAE0NrFs00uPjw0rptqV2g/-Do7ErI7dUe8DhSeoUmXqw",
+  "ParentRef": "yAE0NrFs00uPjw0rptqV2g/Nxc1XO7fPUWddxv6qUIEZw",
+  "Created": "2026-11-05T19:51:29.6974076Z",
+  "Updated": "2026-11-05T19:51:29.6974076Z",
+  "CreatedBy": [
+    "UiPath.UIAutomationCore, Version=26.10.7.0, Culture=neutral, PublicKeyToken=null",
+    "UiPath.Platform, Version=26.4.0.0, Culture=neutral, PublicKeyToken=null"
+  ]
+}

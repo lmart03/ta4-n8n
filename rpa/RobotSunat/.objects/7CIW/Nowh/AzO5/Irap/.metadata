@@ -1,0 +1,15 @@
+﻿{
+  "Name": "Enlace Baja de Archivo ZIP",
+  "Description": "Enlace de descarga del ZIP de resultados (RM...zip) en la pagina de resultados",
+  "Type": "Element",
+  "TaxonomyType": "Label",
+  "Id": "IrapQzt3gUWHZ7FipZsG9g",
+  "Reference": "yAE0NrFs00uPjw0rptqV2g/IrapQzt3gUWHZ7FipZsG9g",
+  "ParentRef": "yAE0NrFs00uPjw0rptqV2g/AzO5GxMYm0ewehNxVrx1pg",
+  "Created": "2026-11-06T17:40:07.4031469Z",
+  "Updated": "2026-11-06T17:40:07.4031469Z",
+  "CreatedBy": [
+    "UiPath.UIAutomationCore, Version=26.10.7.0, Culture=neutral, PublicKeyToken=null",
+    "UiPath.Platform, Version=26.4.0.0, Culture=neutral, PublicKeyToken=null"
+  ]
+}

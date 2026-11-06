@@ -1,0 +1,13 @@
+﻿{
+  "Name": "SUNAT Consulta RUC",
+  "Description": "Portal publico de consulta de RUC de SUNAT",
+  "Type": "App",
+  "Id": "7CIWZ6Df_kelyj2iNlt2ZQ",
+  "Reference": "yAE0NrFs00uPjw0rptqV2g/7CIWZ6Df_kelyj2iNlt2ZQ",
+  "Created": "2026-11-05T19:50:32.2436928Z",
+  "Updated": "2026-11-05T19:50:32.2436928Z",
+  "CreatedBy": [
+    "UiPath.UIAutomationCore, Version=26.10.7.0, Culture=neutral, PublicKeyToken=null",
+    "UiPath.Platform, Version=26.4.0.0, Culture=neutral, PublicKeyToken=null"
+  ]
+}

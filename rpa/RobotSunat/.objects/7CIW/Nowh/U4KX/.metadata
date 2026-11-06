@@ -1,0 +1,14 @@
+﻿{
+  "Name": "Consulta Multiple RUC SUNAT",
+  "Description": "Pagina Consulta Multiple de RUC de SUNAT (descarga multiple) en Edge",
+  "Type": "Screen",
+  "Id": "U4KXygr4oEqTVDhXHYJcug",
+  "Reference": "yAE0NrFs00uPjw0rptqV2g/U4KXygr4oEqTVDhXHYJcug",
+  "ParentRef": "yAE0NrFs00uPjw0rptqV2g/Nowh14T4dE-mQVtLYyjSzQ",
+  "Created": "2026-11-06T17:05:05.4700219Z",
+  "Updated": "2026-11-06T17:05:05.4700219Z",
+  "CreatedBy": [
+    "UiPath.UIAutomationCore, Version=26.10.7.0, Culture=neutral, PublicKeyToken=null",
+    "UiPath.Platform, Version=26.4.0.0, Culture=neutral, PublicKeyToken=null"
+  ]
+}

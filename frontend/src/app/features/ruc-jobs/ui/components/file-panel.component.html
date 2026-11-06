@@ -1,0 +1,104 @@
+@let state = presenter.state({ fileName: fileName(), clientError: clientError(), busy: busy(), job: job() });
+<section class="border-border bg-surface shadow-card flex flex-col gap-4 rounded-xl border p-5 sm:p-6" aria-labelledby="file-title">
+  <h2 id="file-title" class="text-base font-semibold">Archivo de RUC</h2>
+
+  <!-- Selector oculto: "Reemplazar archivo" lo abre sin pasar por la zona de arrastre. -->
+  <input #picker type="file" class="sr-only" tabindex="-1" [accept]="presenter.accept" (change)="onPicked($event)" />
+
+  @switch (state) {
+    @case ('empty') {
+      <div class="animate-fade-in">
+        <app-file-upload
+          [accept]="presenter.accept"
+          hint="Solo archivos .xlsx de hasta 2 MB, con una columna llamada ruc"
+          (fileSelected)="fileSelected.emit($event)" />
+      </div>
+    }
+
+    @default {
+      <div [class]="presenter.cardClasses(state)">
+        <span [class]="presenter.iconClasses(state)" aria-hidden="true">
+          <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5Zm0 0v5h5" />
+            <path d="m9.5 12.5 5 5m0-5-5 5" />
+          </svg>
+        </span>
+
+        <div class="min-w-0 flex-1">
+          <p class="truncate font-medium">{{ job()?.originalFilename ?? fileName() }}</p>
+          <p class="text-muted flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
+            @switch (state) {
+              @case ('validated') {
+                <span class="text-primary inline-flex items-center gap-1 font-medium">
+                  <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5L20 7" /></svg>
+                  Validado
+                </span>
+                <span>{{ job()?.total }} RUC detectados</span>
+                <span class="font-mono text-xs">trabajo {{ presenter.shortId(job()?.id ?? '') }}</span>
+              }
+              @case ('validating') {
+                <span class="inline-flex items-center gap-1.5">
+                  <svg class="h-4 w-4 animate-spin motion-reduce:animate-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9" /></svg>
+                  Validando los RUC…
+                </span>
+              }
+              @case ('invalid') {
+                <span class="text-danger-text font-medium">{{ clientError() }}</span>
+              }
+              @default {
+                <span>{{ presenter.formatSize(fileSize()) }}</span>
+                <span class="text-primary font-medium">Formato válido</span>
+              }
+            }
+          </p>
+        </div>
+
+        @if (state === 'validated') {
+          @if (canReset()) {
+            <button type="button" [class]="presenter.secondaryButton" (click)="newFlow.emit()">Nuevo flujo</button>
+          }
+        } @else {
+          <button type="button" [class]="presenter.secondaryButton" [disabled]="busy()" (click)="picker.click()">
+            Reemplazar archivo
+          </button>
+        }
+      </div>
+    }
+  }
+
+  @if (problem(); as problem) {
+    @if (job() === null) {
+      <div class="bg-danger-soft animate-rise flex flex-col gap-2 rounded-lg border border-red-200 px-4 py-3 text-sm" role="alert">
+        <p class="text-danger-text font-semibold">{{ problem.title ?? 'No se pudo procesar el archivo.' }}</p>
+        @if (problem.detail) {
+          <p class="text-slate-700">{{ problem.detail }}</p>
+        }
+        @if (problem.errors?.length) {
+          <ul class="list-disc pl-5 text-slate-700">
+            @for (issue of problem.errors; track $index) {
+              <li>{{ issue.detail }}</li>
+            }
+          </ul>
+        }
+      </div>
+    }
+  }
+
+  @if (state !== 'validated') {
+    <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
+      <button type="button" [class]="presenter.primaryButton" [disabled]="!canBegin()" (click)="begin.emit()">
+        @if (busy()) {
+          <svg class="h-4 w-4 animate-spin motion-reduce:animate-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9" /></svg>
+          Validando y arrancando…
+        } @else {
+          Iniciar consulta
+        }
+      </button>
+      @if (state === 'empty' || state === 'invalid') {
+        <p class="text-muted text-sm">Adjunta un Excel .xlsx válido para poder empezar.</p>
+      } @else if (robotState() === 'offline' && !busy()) {
+        <p class="text-warning-text text-sm">El robot no está disponible: el pedido quedará en cola y arrancará cuando se conecte.</p>
+      }
+    </div>
+  }
+</section>

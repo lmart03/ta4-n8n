@@ -1,0 +1,19 @@
+@let view = presenter.view(state());
+<div class="flex items-start gap-2.5 sm:justify-end" role="status" aria-live="polite">
+  <span class="mt-1.5 h-2 w-2 shrink-0 rounded-full transition-colors duration-500" [class]="view.dot" aria-hidden="true"></span>
+  <div class="min-w-0 sm:text-right">
+    <p class="text-sm font-medium">{{ view.title }}</p>
+    @if (view.detail) {
+      <p class="text-muted text-xs">{{ view.detail }}</p>
+    }
+    @if (state() === 'offline') {
+      <!-- ta4robot:// lo registra "iniciar.bat /instalar"; Edge pregunta una vez y luego abre el lanzador solo. -->
+      <a
+        [href]="presenter.startLink"
+        class="text-primary focus-visible:ring-primary mt-1 inline-flex min-h-11 items-center rounded px-1 text-sm font-semibold underline underline-offset-2 focus-visible:ring-2">
+        Encender robot
+      </a>
+      <p class="text-muted text-xs">Si no pasa nada, ejecuta iniciar.bat /instalar una sola vez.</p>
+    }
+  </div>
+</div>

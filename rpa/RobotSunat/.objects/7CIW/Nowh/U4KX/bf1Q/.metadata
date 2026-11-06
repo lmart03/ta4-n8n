@@ -1,0 +1,15 @@
+﻿{
+  "Name": "Boton Enviar archivo",
+  "Description": "Boton Enviar del formulario de consulta por archivo",
+  "Type": "Element",
+  "TaxonomyType": "Button",
+  "Id": "bf1QwKVPTUSSYiPcLrGwfg",
+  "Reference": "yAE0NrFs00uPjw0rptqV2g/bf1QwKVPTUSSYiPcLrGwfg",
+  "ParentRef": "yAE0NrFs00uPjw0rptqV2g/U4KXygr4oEqTVDhXHYJcug",
+  "Created": "2026-11-06T17:06:12.1697907Z",
+  "Updated": "2026-11-06T17:06:12.1697907Z",
+  "CreatedBy": [
+    "UiPath.UIAutomationCore, Version=26.10.7.0, Culture=neutral, PublicKeyToken=null",
+    "UiPath.Platform, Version=26.4.0.0, Culture=neutral, PublicKeyToken=null"
+  ]
+}

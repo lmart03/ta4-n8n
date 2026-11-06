@@ -1,0 +1,61 @@
+@let f = presenter.facade;
+<div class="flex flex-col gap-5">
+  @if (f.statusProblem(); as problem) {
+    <p class="bg-warning-soft text-warning-text animate-rise rounded-lg border border-amber-200 px-4 py-3 text-sm" role="alert">
+      No se pudo revisar el estado: {{ problem.detail ?? problem.title }} Seguimos intentando.
+    </p>
+  }
+
+  @if (presenter.components(); as items) {
+    <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+      @for (item of items; track item.key) {
+        <app-connection-card [item]="item">
+          @switch (item.key) {
+            @case ('webhook') {
+              <div class="flex flex-col gap-2">
+                <button
+                  type="button"
+                  (click)="f.registerWebhook()"
+                  [disabled]="f.webhookBusy() || !presenter.canRegister()"
+                  [class]="presenter.needsRegistration() ? 'bg-primary hover:bg-primary-hover text-white' : 'border-border hover:bg-background border'"
+                  class="focus-visible:ring-primary min-h-11 rounded-md px-4 text-sm font-semibold focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60">
+                  {{ f.webhookBusy() ? 'Registrando…' : 'Registrar webhook' }}
+                </button>
+                @if (!presenter.canRegister()) {
+                  <p class="text-muted text-xs">Necesita el túnel activo.</p>
+                }
+                @if (f.webhookResult(); as result) {
+                  <p class="text-xs" [class]="result.ok ? 'text-success' : 'text-danger-text'" role="status">{{ result.text }}</p>
+                }
+              </div>
+            }
+            @case ('gemini') {
+              <div class="flex flex-col gap-2">
+                <button
+                  type="button"
+                  (click)="f.pingGemini()"
+                  [disabled]="f.geminiBusy()"
+                  class="border-border hover:bg-background focus-visible:ring-primary min-h-11 rounded-md border px-4 text-sm font-medium focus-visible:ring-2 disabled:opacity-60">
+                  {{ f.geminiBusy() ? 'Probando…' : 'Probar Gemini' }}
+                </button>
+                @if (f.geminiResult(); as result) {
+                  <p class="text-xs" [class]="result.ok ? 'text-success' : 'text-danger-text'" role="status">{{ result.text }}</p>
+                }
+              </div>
+            }
+          }
+        </app-connection-card>
+      }
+    </div>
+    <p class="text-muted text-xs">
+      Se revisa cada 5 segundos · última comprobación {{ presenter.checkedAt() }}
+      @if (f.status()?.autoRegister) {
+        · el webhook se registra solo si cambia la dirección del túnel
+      }
+    </p>
+  } @else {
+    <div class="bg-surface border-border text-muted rounded-lg border p-6 text-center text-sm" role="status">Revisando las piezas del bot…</div>
+  }
+
+  <app-bot-link-card [link]="f.status()?.botLink ?? null" [username]="f.status()?.botUsername ?? null" />
+</div>

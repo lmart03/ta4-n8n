@@ -1,0 +1,178 @@
+<section class="flex flex-col gap-4" aria-labelledby="results-title">
+  <div class="flex flex-wrap items-center justify-between gap-3">
+    <h2 id="results-title" class="text-base font-semibold">Resultados</h2>
+    @if (exportUrl(); as url) {
+      <a [href]="url" download [class]="presenter.secondaryButton">
+        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11m0 0-4-4m4 4 4-4M5 19h14" /></svg>
+        Descargar Excel
+      </a>
+    }
+  </div>
+
+  <dl class="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-5">
+    @for (metric of presenter.metrics(summary()); track metric.label) {
+      <div [class]="presenter.metricClasses(metric.tone)">
+        <dt class="text-sm font-medium text-slate-600">{{ metric.label }}</dt>
+        <dd [class]="presenter.metricValueClasses(metric.tone)">{{ metric.value }}</dd>
+        <dd class="text-muted text-xs">{{ metric.hint }}</dd>
+      </div>
+    }
+  </dl>
+
+  <div class="border-border bg-surface shadow-card rounded-xl border">
+    <div class="border-border flex flex-wrap items-end justify-between gap-3 border-b p-4">
+      <div class="flex w-full flex-col gap-1 sm:w-80">
+        <label for="grid-search" class="text-sm font-medium">Buscar</label>
+        <input
+          id="grid-search"
+          type="search"
+          class="focus:border-primary focus:ring-primary min-h-11 rounded-lg border-slate-300"
+          placeholder="RUC, razón social, dirección o condición"
+          autocomplete="off"
+          [value]="search()"
+          (input)="searchChange.emit(presenter.inputValue($event))" />
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2" role="group" aria-label="Filtrar por estado de consulta">
+        @for (option of presenter.filterOptions(summary()); track option.key) {
+          <button
+            type="button"
+            [class]="presenter.filterClasses(statusFilter() === option.key)"
+            [attr.aria-pressed]="statusFilter() === option.key"
+            (click)="statusFilterChange.emit(option.key)">
+            {{ option.label }}
+            <span class="tabular-nums opacity-70">{{ option.count }}</span>
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- La página hace el scroll vertical; el horizontal solo aparece en pantallas estrechas. -->
+    <div class="overflow-x-auto">
+      <table class="w-full border-collapse text-left text-sm">
+        <caption class="sr-only">
+          Resultados de la consulta de RUC en SUNAT. Mostrando {{ items().length }} de {{ summary().total }}.
+        </caption>
+        <thead>
+          <tr class="border-border border-b bg-slate-50/70">
+            @for (column of presenter.columns; track column.key) {
+              <th
+                scope="col"
+                class="px-4 py-2.5 text-xs font-medium tracking-wide whitespace-nowrap text-slate-500 uppercase"
+                [attr.aria-sort]="presenter.ariaSort(sortKey(), sortDirection(), column.key)">
+                <button
+                  type="button"
+                  class="hover:text-foreground focus-visible:ring-primary -mx-1 inline-flex min-h-9 items-center gap-1 rounded px-1 font-medium uppercase focus-visible:ring-2"
+                  (click)="sortChange.emit(column.key)">
+                  {{ column.label }}
+                  <span aria-hidden="true" class="w-3 text-[10px]">{{ presenter.arrow(sortKey(), sortDirection(), column.key) }}</span>
+                </button>
+              </th>
+            }
+            <th scope="col" class="px-4 py-2.5 text-xs font-medium tracking-wide whitespace-nowrap text-slate-500 uppercase">Detalle</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of items(); track item.excelRow) {
+            <tr class="border-border border-b align-top transition-colors last:border-b-0 hover:bg-slate-50">
+              <td class="px-4 py-3 font-mono font-medium tabular-nums whitespace-nowrap">{{ item.ruc }}</td>
+              <td class="px-4 py-3">
+                @if (item.razonSocial) {
+                  <span class="animate-fade-in font-medium">{{ item.razonSocial }}</span>
+                } @else if (waiting() && item.status === 'PENDIENTE') {
+                  <div class="h-4 w-56 max-w-full" [class]="presenter.placeholder" aria-hidden="true"></div>
+                  <span class="sr-only">Esperando datos de SUNAT</span>
+                } @else {
+                  <span class="text-muted">—</span>
+                }
+              </td>
+              <td class="px-4 py-3">
+                @if (item.direccionFiscal) {
+                  <span class="animate-fade-in">{{ item.direccionFiscal }}</span>
+                } @else if (waiting() && item.status === 'PENDIENTE') {
+                  <div class="h-4 w-72 max-w-full" [class]="presenter.placeholder" aria-hidden="true"></div>
+                } @else {
+                  <span class="text-muted">—</span>
+                }
+              </td>
+              <td class="px-4 py-3 whitespace-nowrap">
+                @if (item.condicionContribuyente; as condition) {
+                  <span class="animate-fade-in" [class]="presenter.conditionBadge(condition)">{{ condition }}</span>
+                } @else if (waiting() && item.status === 'PENDIENTE') {
+                  <div class="h-5 w-20 rounded-full" [class]="presenter.placeholder" aria-hidden="true"></div>
+                } @else {
+                  <span class="text-muted">—</span>
+                }
+              </td>
+              <td class="px-4 py-3 whitespace-nowrap tabular-nums">
+                @if (item.fechaInicioActividades) {
+                  <span class="animate-fade-in">{{ presenter.date(item.fechaInicioActividades) }}</span>
+                } @else if (waiting() && item.status === 'PENDIENTE') {
+                  <div class="h-4 w-24" [class]="presenter.placeholder" aria-hidden="true"></div>
+                } @else {
+                  <span class="text-muted">—</span>
+                }
+              </td>
+              <td class="px-4 py-3 whitespace-nowrap">
+                <span [class]="presenter.statusBadge(item.status)">{{ presenter.statusLabel(item.status) }}</span>
+                @if (item.observation) {
+                  <div class="text-warning-text mt-1 max-w-64 text-xs whitespace-normal">{{ item.observation }}</div>
+                }
+              </td>
+              <td class="px-4 py-3 whitespace-nowrap">
+                @if (item.detalle) {
+                  <button
+                    type="button"
+                    class="text-primary focus-visible:ring-primary min-h-9 rounded px-2 text-sm font-medium underline-offset-2 hover:underline focus-visible:ring-2"
+                    [attr.aria-expanded]="presenter.isOpen(item.excelRow)"
+                    (click)="presenter.toggle(item.excelRow)">
+                    {{ presenter.isOpen(item.excelRow) ? 'Ocultar' : 'Ver más' }}
+                  </button>
+                } @else {
+                  <span class="text-muted">—</span>
+                }
+              </td>
+            </tr>
+            @if (presenter.isOpen(item.excelRow) && item.detalle) {
+              <tr class="border-border animate-fade-in border-b bg-slate-50/60">
+                <td [attr.colspan]="presenter.columns.length + 1" class="px-4 py-4">
+                  <dl class="grid grid-cols-1 gap-x-8 gap-y-3 text-sm sm:grid-cols-2 xl:grid-cols-3">
+                    @for (field of presenter.detailFields(item.detalle); track field.label) {
+                      <div>
+                        <dt class="text-muted text-xs">{{ field.label }}</dt>
+                        <dd class="font-medium">{{ field.value }}</dd>
+                      </div>
+                    } @empty {
+                      <p class="text-muted">SUNAT no informó datos adicionales para este RUC.</p>
+                    }
+                  </dl>
+                </td>
+              </tr>
+            }
+          } @empty {
+            <tr>
+              <td [attr.colspan]="presenter.columns.length + 1" class="px-4 py-12 text-center">
+                @if (summary().total === 0) {
+                  <p class="font-medium">Sin resultados</p>
+                  <p class="text-muted text-sm">El trabajo no tiene RUC para mostrar.</p>
+                } @else {
+                  <p class="font-medium">Ningún RUC coincide con los filtros</p>
+                  <button
+                    type="button"
+                    class="text-primary focus-visible:ring-primary mt-2 min-h-11 rounded px-3 font-medium underline focus-visible:ring-2"
+                    (click)="filtersCleared.emit()">
+                    Quitar filtros
+                  </button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <p class="text-muted border-border border-t px-4 py-2.5 text-xs" aria-live="polite">
+      Mostrando {{ items().length }} de {{ summary().total }} RUC
+    </p>
+  </div>
+</section>

@@ -1,0 +1,26 @@
+.env
+**/target/
+*.log
+*.xlsx
+!rpa/plantilla_ruc_entrada.xlsx
+rpa/inbox/*
+!rpa/inbox/.gitkeep
+
+
+# Dependencias y compilados
+node_modules/
+frontend/dist/
+frontend/.angular/
+coverage/
+*.tsbuildinfo
+
+# Proyecto UiPath: caché de compilación local (se regenera con `uip rpa build`)
+rpa/RobotSunat/.local/
+rpa/RobotSunat/~*
+
+# Editor / herramientas
+.idea/
+.vscode/
+.claude/
+.DS_Store
+Thumbs.db
